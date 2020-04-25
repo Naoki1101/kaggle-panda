@@ -1,0 +1,13 @@
+  
+__pycache__/
+.DS_Store
+
+notebooks/*
+!EDA_*.ipynb
+
+logs/
+data/
+pickle/
+
+notify.yml
+tox.ini

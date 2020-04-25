@@ -1,0 +1,83 @@
+common:
+    input_root: ../data/input/
+    img_file: train.csv
+    seed: &vars 2020
+    drop_fname:
+
+model:
+    name: resnet18
+    n_channels: 3
+    n_classes: 6
+    pretrained: True
+    avgpool:
+        name: GeM
+        params: {}
+    metric:
+
+data:
+    train:
+        dataset_type: CustomDataset
+        img_size:
+            width: &wsize 256
+            height: &hsize 256
+        n_channels: 3
+        epochs: 5
+        loader:
+            shuffle: True
+            batch_size: 16
+            num_workers: 4
+        transforms:
+            rotate:
+                name: Rotate
+                params:
+                    p: 0.5
+                    limit: 10
+            hflip:
+                name: HorizontalFlip
+                params:
+                    p: 0.5
+            vflip:
+                name: VerticalFlip
+                params:
+                    p: 0.5
+            norm:
+                name: Normalize
+                params:
+                    max_pixel_value: 255.0
+    valid:
+        dataset_type: CustomDataset
+        img_size:
+            width: *wsize
+            height: *hsize
+        n_channels: 3
+        loader:
+            shuffle: False
+            batch_size: 16
+            num_workers: 4
+        transforms:
+    test:
+        dataset_type: CustomDataset
+        img_size:
+            width: *wsize
+            height: *hsize
+        n_channels: 3
+        loader:
+            shuffle: False
+            batch_size: 16
+            num_workers: 4
+        transforms:
+
+loss: 
+    name: CrossEntropyLoss
+    params: {}
+
+optimizer:
+    name: Adam
+    params:
+        lr: 0.0001
+
+scheduler:
+    name: CosineAnnealingLR
+    params:
+        eta_min: 0.00001
+        T_max: 30
