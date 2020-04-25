@@ -1,2 +1,2 @@
 cd ../src
-python train.py -m 'clf_resnet18' -c 'test'
+python train.py -m 'efficientnet_b3' -c 'test'

@@ -67,10 +67,6 @@ class DataProcessor(metaclass=ABCMeta):
 class YmlPrrocessor(DataProcessor):
 
     def load(self, path):
-        # yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-        #                      lambda loader,
-        #                      node: OrderedDict(loader.construct_pairs(node)))
-
         with open(path, 'r') as yf:
             yaml_file = yaml.load(yf, Loader=yaml.SafeLoader)
         return edict(yaml_file)

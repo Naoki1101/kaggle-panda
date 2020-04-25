@@ -58,7 +58,6 @@ def main():
     seed_everything(cfg.common.seed)
 
     logger_path.mkdir(exist_ok=True)
-    print(logger_path)
     logging.basicConfig(filename=logger_path / 'train.log', level=logging.DEBUG)
 
     dh.save(logger_path / 'config.yml', cfg)
