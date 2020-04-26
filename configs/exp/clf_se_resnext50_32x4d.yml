@@ -8,7 +8,7 @@ common:
         notebook: False
 
 model:
-    name: resnet18
+    name: se_resnext50_32x4d
     n_channels: &channel 3
     n_classes: 6
     pretrained: True

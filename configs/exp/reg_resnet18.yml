@@ -1,16 +1,16 @@
 common:
     input_root: ../data/input/
     img_file: train.csv
-    seed: &vars 2020
+    seed: 2020
     drop_fname:
     kaggle:
         data: True
         notebook: True
 
 model:
-    name: se_resnext101_32x4d
-    n_channels: 3
-    n_classes: 6
+    name: resnet18
+    n_channels: &channel 3
+    n_classes: 1
     pretrained: True
     avgpool:
         name: GeM
@@ -24,7 +24,7 @@ data:
         img_size:
             width: &wsize 256
             height: &hsize 256
-        n_channels: 3
+        n_channels: *channel
         epochs: 10
         loader:
             shuffle: True
@@ -50,7 +50,7 @@ data:
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: 3
+        n_channels: *channel
         loader:
             shuffle: False
             batch_size: 16
@@ -62,7 +62,7 @@ data:
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: 3
+        n_channels: *channel
         loader:
             shuffle: False
             batch_size: 16
@@ -70,16 +70,23 @@ data:
         transforms:
 
 loss: 
-    name: CrossEntropyLoss
+    name: MSELoss
     params: {}
 
 optimizer:
     name: Adam
     params:
-        lr: 0.001
+        lr: 0.0001
 
 scheduler:
     name: CosineAnnealingLR
     params:
         eta_min: 0.00001
         T_max: 10
+    # name: ReduceLROnPlateau
+    # params:
+    #     mode: min
+    #     factor: 0.5
+    #     patience: 2
+    #     verbose: True
+    #     eps: 0.000001
