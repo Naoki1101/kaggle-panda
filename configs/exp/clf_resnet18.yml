@@ -3,6 +3,9 @@ common:
     img_file: train.csv
     seed: &vars 2020
     drop_fname:
+    kaggle:
+        data: True
+        notebook: True
 
 model:
     name: resnet18
@@ -17,6 +20,7 @@ model:
 data:
     train:
         dataset_type: CustomDataset
+        is_train: True
         img_size:
             width: &wsize 256
             height: &hsize 256
@@ -42,6 +46,7 @@ data:
                     p: 0.5
     valid:
         dataset_type: CustomDataset
+        is_train: True
         img_size:
             width: *wsize
             height: *hsize
@@ -53,6 +58,7 @@ data:
         transforms:
     test:
         dataset_type: CustomDataset
+        is_train: False
         img_size:
             width: *wsize
             height: *hsize
@@ -73,14 +79,14 @@ optimizer:
         lr: 0.0001
 
 scheduler:
-    name: ReduceLROnPlateau
+    name: CosineAnnealingLR
     params:
-        mode: min
-        factor: 0.5
-        patience: 2
-        verbose: True
-        eps: 0.000001
-    # name: CosineAnnealingLR
+        eta_min: 0.00001
+        T_max: 30
+    # name: ReduceLROnPlateau
     # params:
-    #     eta_min: 0.00001
-    #     T_max: 30
+    #     mode: min
+    #     factor: 0.5
+    #     patience: 2
+    #     verbose: True
+    #     eps: 0.000001

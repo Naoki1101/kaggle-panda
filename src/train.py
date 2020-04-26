@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 import joblib
 import torch
 
-from utils import Timer, seed_everything, DataHandler
+from utils import Timer, seed_everything, DataHandler, Kaggle
 from utils import send_line, Notion
 from trainer import train_cnn, save_png
 
@@ -84,18 +84,25 @@ def main():
         result = train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg)
 
     logging.disable(logging.FATAL)
-    logger_path.rename(f'../logs/{run_name}_{result["cv"]:.3f}')
+    run_name_cv = f'{run_name}_{result["cv"]:.3f}'
+    logger_path.rename(f'../logs/{run_name_cv}')
 
-    process_minutes = t.get_processing_time()
+    with t.timer('kaggle api'):
+        kaggle = Kaggle(cfg.compe.compe_name, run_name_cv)
+        if cfg.common.kaggle.data:
+            kaggle.create_dataset()
+        if cfg.common.kaggle.notebook:
+            kaggle.push_notebook()
 
     with t.timer('notify'):
+        process_minutes = t.get_processing_time()
         message = f'''{model_name}\ncv: {result["cv"]:.3f}\ntime: {process_minutes:.2f}[h]'''
         send_line(notify_params.line.token, message)
 
         notion = Notion(token=notify_params.notion.token_v2)
         notion.set_url(url=notify_params.notion.url)
         notion.insert_rows({
-            'name': run_name,
+            'name': run_name_cv,
             'created': now,
             'model': cfg.model.name,
             'local_cv': round(result['cv'], 4),

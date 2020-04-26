@@ -1,13 +1,16 @@
 import random
 import os
+import re
 import json
 import time
 import yaml
+import shutil
 from contextlib import contextmanager
 from abc import ABCMeta, abstractmethod
 
 import numpy as np
 import pandas as pd
+from pathlib import Path
 import torch
 import joblib
 import requests
@@ -178,24 +181,82 @@ def make_submission(y_pred, target_name, sample_path, output_path, comp=False):
 # =============================================================================
 class Kaggle:
 
-    def __init__(self, compe_name):
+    def __init__(self, compe_name, run_name):
         self.compe_name = compe_name
+        self.run_name = run_name
+        self.slug = re.sub('[_.]', '-', run_name)
+        self.log_dir = f'../logs/{run_name}'
+        self.notebook_dir = f'../notebooks/{run_name}'
 
-    def submit(self, data_path, run_name, cv):
-        cmd = f'kaggle competitions submit -c {self.compe_name} -f {data_path}  -m "{run_name}_{cv:.4f}"'
+    def submit(self, comment):
+        cmd = f'kaggle competitions submit -c {self.compe_name} -f ../data/output/{self.run_name}.csv  -m "{comment}"'
         self._run(cmd)
         print(f'\n\nhttps://www.kaggle.com/c/{self.compe_name}/submissions\n\n')
 
-    def download_data(self, to_path):
-        cmd = f'kaggle competitions download -c {self.compe_name} -p {to_path}'
-        self._run(cmd)
-
-    def create_dataset(self, data_path):
-        cmd = f'kaggle datasets create -p {data_path}'
-        self._run(cmd)
+    def create_dataset(self):
+        cmd_init = f'kaggle datasets init -p {self.log_dir}'
+        cmd_create = f'kaggle datasets create -p {self.log_dir} -q'
+        self._run(cmd_init)
+        self._insert_dataset_metadata()
+        self._run(cmd_create)
+    
+    def push_notebook(self):
+        time.sleep(20)
+        self._prepare_notebook_dir()
+        cmd_init = f'kaggle kernels init -p {self.notebook_dir}'
+        cmd_push = f'kaggle kernels push -p {self.notebook_dir}'
+        self._run(cmd_init)
+        self._insert_kernel_metadata()
+        self._run(cmd_push)
 
     def _run(self, cmd):
         os.system(cmd)
+
+    def _insert_dataset_metadata(self):
+        jh = JsonProcessor()
+        
+        metadata_path = f'{self.log_dir}/dataset-metadata.json' 
+        meta = jh.load(metadata_path)
+        meta['title'] = self.run_name
+        meta['id'] = re.sub('INSERT_SLUG_HERE', f'sub-{self.slug}', meta['id'])
+        jh.save(metadata_path, meta)
+
+    def _insert_kernel_metadata(self):
+        jh = JsonProcessor()
+
+        metadata_path = f'{self.notebook_dir}/kernel-metadata.json'
+        meta = jh.load(metadata_path)
+        meta['title'] = self.run_name
+        meta['id'] = re.sub('INSERT_KERNEL_SLUG_HERE', self.slug, meta['id'])
+        meta['code_file'] = f'sub_{self.run_name}.ipynb'
+        meta['language'] = 'python'
+        meta['kernel_type'] = 'notebook'
+        meta['is_private'] = 'true'
+        meta['enable_gpu'] = 'true'
+        meta['enable_internet'] = 'false'
+        meta['dataset_sources'] = [f'narimatsu/sub-{self.slug}']
+        meta['competition_sources'] = [f'{self.compe_name}']
+        meta['kernel_sources'] = []
+
+        jh.save(metadata_path, meta)
+
+    def _prepare_notebook_dir(self):
+        Path(f'../notebooks/{self.run_name}').mkdir(exist_ok=True)
+        if 'resnet' in self.run_name:
+            shutil.copy(
+                '../notebooks/resnet_for_inference.ipynb', 
+                f'{self.notebook_dir}/sub_{self.run_name}.ipynb'
+            )
+        elif 'se_resnext' in self.run_name:
+            shutil.copy(
+                '../notebooks/se_resnext_for_inference.ipynb', 
+                f'{self.notebook_dir}/sub_{self.run_name}.ipynb'
+            )
+        elif 'efficientnet' in self.run_name:
+            shutil.copy(
+                '../notebooks/efficientnet_for_inference.ipynb', 
+                f'{self.notebook_dir}/sub_{self.run_name}.ipynb'
+            )
 
 
 # =============================================================================

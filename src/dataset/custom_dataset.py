@@ -18,12 +18,12 @@ def get_transforms(cfg):
 
 
 class CustomDataset(Dataset):
-    def __init__(self, df, labels, cfg, is_train=True):
+    def __init__(self, df, labels, cfg):
         self.cfg = cfg
         self.image_ids = df['image_id'].values
-        self.labels = labels.values
+        self.labels = labels
         self.transforms = get_transforms(self.cfg)
-        self.is_train = is_train
+        self.is_train = cfg.is_train
         self.image_path = '../data/input/train_images'
 
     def __len__(self):
@@ -39,7 +39,7 @@ class CustomDataset(Dataset):
         image = image.transpose(2, 0, 1).astype(np.float32)
 
         if self.is_train:
-            label = self.labels[idx]
+            label = self.labels.values[idx]
             return image, label
         else:
             return image
