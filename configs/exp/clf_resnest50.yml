@@ -4,12 +4,12 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnest50
-    n_channels: 3
+    n_channels: &channel 3
     n_classes: 6
     pretrained: True
     avgpool:
@@ -20,12 +20,13 @@ model:
 data:
     train:
         dataset_type: CustomDataset
+        img_type: &img_type image
         is_train: True
         img_size:
             width: &wsize 256
             height: &hsize 256
-        n_channels: 3
-        epochs: 50
+        n_channels: *channel
+        epochs: 5
         loader:
             shuffle: True
             batch_size: 16
@@ -46,11 +47,12 @@ data:
                     p: 0.5
     valid:
         dataset_type: CustomDataset
+        img_type: *img_type
         is_train: True
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: 3
+        n_channels: *channel
         loader:
             shuffle: False
             batch_size: 16
@@ -58,11 +60,12 @@ data:
         transforms:
     test:
         dataset_type: CustomDataset
+        img_type: *img_type
         is_train: False
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: 3
+        n_channels: *channel
         loader:
             shuffle: False
             batch_size: 16
@@ -76,10 +79,17 @@ loss:
 optimizer:
     name: Adam
     params:
-        lr: 0.001
+        lr: 0.0001
 
 scheduler:
     name: CosineAnnealingLR
     params:
         eta_min: 0.00001
-        T_max: 50
+        T_max: 30
+    # name: ReduceLROnPlateau
+    # params:
+    #     mode: min
+    #     factor: 0.5
+    #     patience: 2
+    #     verbose: True
+    #     eps: 0.000001
