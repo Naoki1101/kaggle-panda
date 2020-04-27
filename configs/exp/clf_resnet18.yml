@@ -73,7 +73,7 @@ data:
         transforms:
 
 loss: 
-    name: FocalLoss
+    name: OhemLoss
     params: {}
 
 optimizer:
