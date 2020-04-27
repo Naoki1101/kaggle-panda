@@ -75,47 +75,6 @@ class SmoothCrossEntropyLoss(_WeightedLoss):
         return loss
 
 
-class CustomSmoothCrossEntropyLoss(_WeightedLoss):
-    def __init__(self, weight=None, reduction='mean', smoothing=0.0):
-        super().__init__(weight=weight, reduction=reduction)
-        self.smoothing = smoothing
-        self.weight = weight
-        self.reduction = reduction
-
-    @staticmethod
-    def _smooth_one_hot(targets:torch.Tensor, n_classes:int, smoothing=0.0):
-        assert 0 <= smoothing < 1
-        with torch.no_grad():
-            targets = torch.empty(size=(targets.size(0), n_classes),
-                    device=targets.device) \
-                .fill_(smoothing /(n_classes-1)) \
-                .scatter_(1, targets.data.unsqueeze(1), 1.-smoothing)
-
-            size = (targets.size(0), n_classes)
-            near_targets = torch.zeros(size=size, device=targets.device).scatter_(1, targets.data.unsqueeze(1), 1) \
-                                       + torch.cat([torch.zeros(targets.size(0), 1), b0[:, :-1]], axis=1) \
-                                       + torch.cat([b0[:, 1:], torch.zeros(targets.size(0), 1)], axis=1)
-            targets = targets * near_targets
-        return targets
-
-    def forward(self, inputs, targets):
-        targets = SmoothCrossEntropyLoss._smooth_one_hot(targets, inputs.size(-1),
-            self.smoothing)
-        lsm = F.log_softmax(inputs, -1)
-
-        if self.weight is not None:
-            lsm = lsm * self.weight.unsqueeze(0)
-
-        loss = -(targets * lsm).sum(-1)
-
-        if  self.reduction == 'sum':
-            loss = loss.sum()
-        elif  self.reduction == 'mean':
-            loss = loss.mean()
-
-        return loss
-
-
 # https://kyudy.hatenablog.com/entry/2019/05/20/105526
 class FocalLoss(nn.Module):
     def __init__(self, gamma=0, eps=1e-7):
