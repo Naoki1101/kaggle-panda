@@ -26,7 +26,7 @@ data:
             width: &wsize 256
             height: &hsize 256
         n_channels: *channel
-        epochs: 5
+        epochs: 50
         loader:
             shuffle: True
             batch_size: 16
@@ -79,10 +79,10 @@ loss:
 optimizer:
     name: Adam
     params:
-        lr: 0.0001
+        lr: 0.001
 
 scheduler:
     name: CosineAnnealingLR
     params:
         eta_min: 0.00001
-        T_max: 30
+        T_max: 10

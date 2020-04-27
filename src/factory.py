@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
+import loss
 import layer
 from models import efficientnet, resnet, resnest, senet
 from dataset.custom_dataset import CustomDataset
@@ -112,7 +113,10 @@ def get_model(cfg):
 
 
 def get_loss(cfg):
-    loss = getattr(nn, cfg.loss.name)(**cfg.loss.params)
+    try:
+        loss = getattr(nn, cfg.loss.name)(**cfg.loss.params)
+    except:
+        loss = getattr(loss, cfg.loss.name)(**cfg.loss.params)
     return loss
 
 
