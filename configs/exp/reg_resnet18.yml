@@ -26,7 +26,7 @@ data:
             width: &wsize 256
             height: &hsize 256
         n_channels: *channel
-        epochs: 50
+        epochs: 10
         loader:
             shuffle: True
             batch_size: 16
@@ -73,7 +73,7 @@ data:
         transforms:
 
 loss: 
-    name: MSELoss
+    name: RMSELoss
     params: {}
 
 optimizer:

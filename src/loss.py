@@ -28,7 +28,7 @@ class RMSELoss(nn.Module):
 class CrossEntropyLoss(nn.Module):
     def __init__(self):
         super().__init__()
-        self.mse = nn.MSELoss()
+        self.xloss = nn.CrossEntropyLoss()
         
     def forward(self,yhat,y):
-        return self.mse(yhat,y)
+        return self.xloss(yhat,y)

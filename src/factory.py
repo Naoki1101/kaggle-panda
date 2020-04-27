@@ -113,10 +113,7 @@ def get_model(cfg):
 
 
 def get_loss(cfg):
-    try:
-        loss = getattr(nn, cfg.loss.name)(**cfg.loss.params)
-    except:
-        loss = getattr(loss, cfg.loss.name)(**cfg.loss.params)
+    loss = getattr(loss, cfg.loss.name)(**cfg.loss.params)
     return loss
 
 
