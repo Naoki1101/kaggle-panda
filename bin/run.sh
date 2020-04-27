@@ -3,8 +3,9 @@ cd ../src
 # python train.py -m 'clf_resnest50' -c '...'
 # python train.py -m 'clf_resnet18' -c 'test imgae_mask'
 # python train.py -m 'clf_resnet50' -c '...'
-python train.py -m 'clf_se_resnext50_32x4d' -c 'stratify=data_provider'
+# python train.py -m 'clf_se_resnext50_32x4d' -c 'stratify=data_provider'
 
+python train.py -m 'reg_resnet18' -c 'test regression'
 
 cd ../
 git add -A

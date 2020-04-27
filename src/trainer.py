@@ -18,7 +18,7 @@ import seaborn as sns
 
 import factory
 from models import metric
-from metrics import quadratic_weighted_kappa
+from metrics import quadratic_weighted_kappa, QWKOptimizedRounder
 
 
 def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
@@ -84,7 +84,15 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
             avg_val_loss += loss.item() / len(valid_loader)
 
-        val_score =quadratic_weighted_kappa(val_y, valid_preds.argmax(1))
+        if cfg.model.n_classes > 1:
+            val_score = quadratic_weighted_kappa(val_y, valid_preds.argmax(1))
+        else:
+            optR = QWKOptimizedRounder()
+            optR.fit(valid_preds.copy(), va_y)
+            best_coef = optR.coefficients()
+            valid_preds_class = optR.predict(valid_preds.copy(), best_coef)
+            val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
+
 
         val_loss_list.append(avg_val_loss)
         val_score_list.append(val_score)
