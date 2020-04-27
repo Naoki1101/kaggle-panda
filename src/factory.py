@@ -113,8 +113,8 @@ def get_model(cfg):
 
 
 def get_loss(cfg):
-    loss = getattr(loss, cfg.loss.name)(**cfg.loss.params)
-    return loss
+    loss_ = getattr(loss, cfg.loss.name)(**cfg.loss.params)
+    return loss_
 
 
 def get_dataloader(df, labels, cfg):
