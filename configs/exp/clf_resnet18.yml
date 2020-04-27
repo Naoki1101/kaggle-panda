@@ -75,7 +75,7 @@ data:
 loss: 
     name: CustomSmoothCrossEntropyLoss
     params:
-        smoothing: 0.2
+        smoothing: 0.1
 
 optimizer:
     name: Adam
