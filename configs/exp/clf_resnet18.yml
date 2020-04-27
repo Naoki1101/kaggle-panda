@@ -73,7 +73,7 @@ data:
         transforms:
 
 loss: 
-    name: CrossEntropyLoss
+    name: FocalLoss
     params: {}
 
 optimizer:
