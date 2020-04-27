@@ -73,8 +73,9 @@ data:
         transforms:
 
 loss: 
-    name: OhemLoss
-    params: {}
+    name: SmoothCrossEntropyLoss
+    params:
+        smoothing: 0.1
 
 optimizer:
     name: Adam

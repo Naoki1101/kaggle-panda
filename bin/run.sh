@@ -1,9 +1,9 @@
 cd ../src
 # python train.py -m 'clf_efficientnet_b3' -c '...'
 # python train.py -m 'clf_resnest50' -c '...'
-python train.py -m 'clf_resnet18' -c 'test OhemLoss'
+# python train.py -m 'clf_resnet18' -c 'smoothing=0.1'
 # python train.py -m 'clf_resnet50' -c '...'
-# python train.py -m 'clf_se_resnext50_32x4d' -c 'stratify=data_provider'
+python train.py -m 'clf_se_resnext50_32x4d' -c 'smoothing=0.1'
 
 # python train.py -m 'reg_resnet18' -c 'test regression'
 

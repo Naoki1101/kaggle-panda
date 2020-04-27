@@ -174,7 +174,7 @@ class ClassBalancedLoss(nn.Module):
 
 
 class OhemLoss(nn.Module):
-    def __init__(self, rate):
+    def __init__(self, rate=0.8):
         super(OhemLoss, self).__init__()
         self.rate = rate
 
