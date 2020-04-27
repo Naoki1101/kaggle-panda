@@ -4,8 +4,8 @@ import torch.nn.functional as F
 from torch.nn import Conv2d, Module, Linear, BatchNorm2d, ReLU
 from torch.nn.modules.utils import _pair
 
-# __all__ = ['SplAtConv2d']
 
+# https://github.com/zhanghang1989/ResNeSt/blob/master/resnest/torch/splat.py
 class SplAtConv2d(Module):
     """Split-Attention Conv2d
     """
