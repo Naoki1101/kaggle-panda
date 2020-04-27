@@ -74,6 +74,8 @@ def main():
     with t.timer('make folds'):
         train_x_all = train_df.drop('isup_grade', axis=1)
         train_y_all = train_df['isup_grade']
+        if cfg.model.n_classes == 1:
+            train_y_all = train_y_all.astype(float)
         trn_x, val_x, trn_y, val_y = train_test_split(train_x_all,
                                                       train_y_all,
                                                       test_size=0.2, 

@@ -88,7 +88,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             val_score = quadratic_weighted_kappa(val_y, valid_preds.argmax(1))
         else:
             optR = QWKOptimizedRounder()
-            optR.fit(valid_preds.copy(), va_y)
+            optR.fit(valid_preds.copy(), val_y)
             best_coef = optR.coefficients()
             valid_preds_class = optR.predict(valid_preds.copy(), best_coef)
             val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
