@@ -257,6 +257,11 @@ class Kaggle:
                 '../notebooks/efficientnet_for_inference.ipynb', 
                 f'{self.notebook_dir}/sub_{self.run_name}.ipynb'
             )
+        elif 'resnest' in self.run_name:
+            shutil.copy(
+                '../notebooks/resnest_for_inference.ipynb', 
+                f'{self.notebook_dir}/sub_{self.run_name}.ipynb'
+            )
 
 
 # =============================================================================
