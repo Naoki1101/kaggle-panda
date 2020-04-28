@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: False
-        notebook: False
+        data: True
+        notebook: True
 
 model:
     name: resnest50
@@ -23,8 +23,8 @@ data:
         img_type: &img_type image
         is_train: True
         img_size:
-            width: &wsize 256
-            height: &hsize 256
+            width: &wsize 312
+            height: &hsize 312
         n_channels: *channel
         epochs: 10
         loader:
