@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: False
-        notebook: False
+        data: True
+        notebook: True
 
 model:
     name: se_resnext50_32x4d
