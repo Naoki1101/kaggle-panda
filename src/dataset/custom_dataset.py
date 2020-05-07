@@ -1,4 +1,5 @@
 import os
+import random
 import cv2
 import numpy as np
 from torch.utils.data import Dataset
@@ -18,6 +19,19 @@ def get_transforms(cfg):
         return None
 
 
+def concat_tiles(image_list, seed):
+    random.seed(seed)
+    image_list = random.shuffle(image_list)
+
+    image = cv2.hconcat([
+        cv2.vconcat([image_list[0], image_list[1], image_list[2], image_list[3]]), 
+        cv2.vconcat([image_list[4], image_list[5], image_list[6], image_list[7]]), 
+        cv2.vconcat([image_list[8], image_list[9], image_list[10], image_list[11]]), 
+        cv2.vconcat([image_list[12], image_list[13], image_list[14], image_list[15]])
+    ])
+    return image
+
+
 class CustomDataset(Dataset):
     def __init__(self, df, labels, cfg):
         self.cfg = cfg
@@ -28,36 +42,21 @@ class CustomDataset(Dataset):
         self.img_type = cfg.img_type
         if self.img_type == 'image':
             self.image_path = '../data/input/train_images'
-        elif self.img_type == 'mask':
-            self.mask_path = '../data/input/train_label_masks'
-        elif self.img_type == 'image_mask':
-            self.image_path = '../data/input/train_images'
-            self.mask_path = '../data/input/train_label_masks'
+        elif self.img_type == 'tile':
+            self.image_path = '../data/input/train_tile_images'
 
     def __len__(self):
         return len(self.image_ids)
 
     def __getitem__(self, idx):
         image_id = self.image_ids[idx]
-
         if self.img_type == 'image':
             image = cv2.imread(f'{self.image_path}/{image_id}.png')
-        elif self.img_type == 'mask':
-            image = cv2.imread(f'{self.mask_path}/{image_id}_mask.png')
-        elif self.img_type == 'image_mask':
-            raw_image = cv2.imread(f'{self.image_path}/{image_id}.png')
-            raw_image = 255 - raw_image
-            if os.path.exists(f'{self.mask_path}/{image_id}_mask.png'):
-                mask = cv2.imread(f'{self.mask_path}/{image_id}_mask.png')
-                mask = (mask[:, :, 0] /mask[:, :, 0].max()  * 255)
-
-                image = raw_image.copy()
-                image[:, :, 0] = image[:, :, 0] * 0.5 + mask * 0.5
-                image[:, :, 1] = image[:, :, 1] * 0.5 + mask * 0.5
-                image[:, :, 2] = image[:, :, 2] * 0.5 + mask * 0.5
-            else:
-                image = raw_image.copy()
-
+        elif self.img_type == 'tile':
+            tiles = []
+            for i in range(16):
+                tiles.append(f'{self.image_path}/{image_id}_{i}.png')
+            image = concat_tiles(tiles, idx)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)
         image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:

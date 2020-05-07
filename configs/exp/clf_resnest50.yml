@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnest50
@@ -20,7 +20,7 @@ model:
 data:
     train:
         dataset_type: CustomDataset
-        img_type: &img_type image
+        img_type: &img_type tile
         is_train: True
         img_size:
             width: &wsize 312
