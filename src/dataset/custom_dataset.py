@@ -21,7 +21,7 @@ def get_transforms(cfg):
 
 def concat_tiles(image_list, seed):
     random.seed(seed)
-    image_list = random.shuffle(image_list)
+    random.shuffle(image_list)
 
     image = cv2.hconcat([
         cv2.vconcat([image_list[0], image_list[1], image_list[2], image_list[3]]), 
