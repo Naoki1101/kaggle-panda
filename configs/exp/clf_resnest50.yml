@@ -23,13 +23,13 @@ data:
         img_type: &img_type tile
         is_train: True
         img_size:
-            width: &wsize 312
-            height: &hsize 312
+            width: &wsize 512
+            height: &hsize 512
         n_channels: *channel
         epochs: 20
         loader:
             shuffle: True
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
             rotate:
