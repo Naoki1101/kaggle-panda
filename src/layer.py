@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d
 from torch.nn import functional as F
 from torch.nn.parameter import Parameter
 from torch.nn.modules.batchnorm import _BatchNorm

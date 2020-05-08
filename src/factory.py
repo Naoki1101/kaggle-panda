@@ -67,6 +67,18 @@ def replace_channels(model, cfg):
         set_channels(model.conv1[0], cfg)
 
 
+def get_head(cfg):
+    head_modules = []
+    
+    for m in cfg.values():
+        module = getattr(nn, m['name'])(**m['params'])
+        head_modules.append(module)
+
+    head_modules = nn.Sequential(*head_modules)
+    
+    return head_modules
+
+
 def replace_fc(model, cfg):
     if cfg.model.metric:
         classes = 1000
@@ -74,20 +86,18 @@ def replace_fc(model, cfg):
         classes = cfg.model.n_classes
 
     if cfg.model.name.startswith('densenet'):
-        fc_input = getattr(model.classifier, 'in_features')
         model.classifier = nn.Linear(fc_input, classes)
     elif cfg.model.name.startswith('efficientnet'):
-        fc_input = getattr(model._fc, 'in_features')
         model._fc = nn.Linear(fc_input, classes)
     elif cfg.model.name.startswith('mobilenet'):
-        fc_input = getattr(model.classifier[1], 'in_features')
         model.classifier[1] = nn.Linear(fc_input, classes)
     elif cfg.model.name.startswith('se_resnext'):
-        fc_input = getattr(model.last_linear, 'in_features')
         model.last_linear = nn.Linear(fc_input, classes)
-    elif cfg.model.name.startswith('resnet') or cfg.model.name.startswith('resnex') or cfg.model.name.startswith('wide_resnet') or cfg.model.name.startswith('resnest'):
-        fc_input = getattr(model.fc, 'in_features')
-        model.fc = nn.Linear(fc_input, classes)
+    elif (cfg.model.name.startswith('resnet') or
+          cfg.model.name.startswith('resnex') or
+          cfg.model.name.startswith('wide_resnet') or
+          cfg.model.name.startswith('resnest')):
+        model.fc = get_head(cfg.model.head)
     return model
 
 
@@ -97,7 +107,10 @@ def replace_pool(model, cfg):
         model._avg_pooling = avgpool
     elif cfg.model.name.startswith('se_resnext'):
         model.avg_pool = avgpool
-    elif cfg.model.name.startswith('resnet') or cfg.model.name.startswith('resnex') or cfg.model.name.startswith('wide_resnet') or cfg.model.name.startswith('resnest'):
+    elif (cfg.model.name.startswith('resnet') or
+          cfg.model.name.startswith('resnex') or
+          cfg.model.name.startswith('wide_resnet') or
+          cfg.model.name.startswith('resnest')):
         model.avgpool = avgpool
     return model
 

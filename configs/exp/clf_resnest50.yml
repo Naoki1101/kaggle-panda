@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnest50
@@ -23,13 +23,13 @@ data:
         img_type: &img_type tile
         is_train: True
         img_size:
-            width: &wsize 480
-            height: &hsize 480
+            width: &wsize 312
+            height: &hsize 312
         n_channels: *channel
-        epochs: 20
+        epochs: 10
         loader:
             shuffle: True
-            batch_size: 8
+            batch_size: 16
             num_workers: 4
         transforms:
             rotate:
@@ -86,7 +86,7 @@ scheduler:
     name: CosineAnnealingLR
     params:
         eta_min: 0.00001
-        T_max: 20
+        T_max: 10
     # name: ReduceLROnPlateau
     # params:
     #     mode: min

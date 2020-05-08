@@ -50,14 +50,19 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         avg_loss = 0.
 
         for images, labels in progress_bar(train_loader, parent=mb):
-            images = Variable(images).to(device)
-            labels = Variable(labels).to(device)
+            images = images.to(device)
+            labels = labels.to(device)
+            if cfg.model.n_classes == 1:
+                labels = labels.float()
 
             if not cfg.model.metric:
                 preds = model(images.float())
             else:
                 features = model(images.float())
                 preds = metric_fc(features, labels)
+            
+            if cfg.model.n_classes == 1:
+                preds = preds.view(-1)
             loss = criterion(preds, labels)
 
             optimizer.zero_grad()
@@ -72,14 +77,19 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         valid_batch_size = valid_loader.batch_size
 
         for i, (images, labels) in enumerate(valid_loader):
-            images = Variable(images).to(device)
-            labels = Variable(labels).to(device)
+            images = images.to(device)
+            labels = labels.to(device)
+            if cfg.model.n_classes == 1:
+                labels = labels.float()
 
             if not cfg.model.metric:
                 preds = model(images.float())
             else:
                 features = model(images.float())
                 preds = metric_fc(features, labels)
+
+            if cfg.model.n_classes == 1:
+                preds = preds.view(-1)
             loss = criterion(preds, labels)
             valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
             avg_val_loss += loss.item() / len(valid_loader)
@@ -106,7 +116,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         mb.write(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.4f}  avg_val_loss: {avg_val_loss:.4f} val_score: {val_score:.4f} time: {elapsed:.0f}s')
         logging.debug(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.4f}  avg_val_loss: {avg_val_loss:.4f} val_score: {val_score:.4f} time: {elapsed:.0f}s')
 
-        if best_val_score < val_score:
+        if val_score > best_val_score:
             best_epoch = epoch + 1
             best_val_score = val_score
             best_valid_preds = valid_preds
