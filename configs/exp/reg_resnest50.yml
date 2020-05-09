@@ -8,7 +8,7 @@ common:
         notebook: True
 
 model:
-    name: se_resnext50_32x4d
+    name: resnest50
     n_channels: &channel 3
     n_classes: 1
     pretrained: True
@@ -26,7 +26,7 @@ model:
 data:
     train:
         dataset_type: CustomDataset
-        img_type: &img_type image
+        img_type: &img_type tile
         is_train: True
         img_size:
             width: &wsize 312

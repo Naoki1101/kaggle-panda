@@ -86,13 +86,13 @@ def replace_fc(model, cfg):
         classes = cfg.model.n_classes
 
     if cfg.model.name.startswith('densenet'):
-        model.classifier = nn.Linear(fc_input, classes)
+        model.classifier = get_head(cfg.model.head)
     elif cfg.model.name.startswith('efficientnet'):
-        model._fc = nn.Linear(fc_input, classes)
+        model._fc = get_head(cfg.model.head)
     elif cfg.model.name.startswith('mobilenet'):
-        model.classifier[1] = nn.Linear(fc_input, classes)
+        model.classifier[1] = get_head(cfg.model.head)
     elif cfg.model.name.startswith('se_resnext'):
-        model.last_linear = nn.Linear(fc_input, classes)
+        model.last_linear = get_head(cfg.model.head)
     elif (cfg.model.name.startswith('resnet') or
           cfg.model.name.startswith('resnex') or
           cfg.model.name.startswith('wide_resnet') or

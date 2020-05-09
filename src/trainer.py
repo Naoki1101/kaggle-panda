@@ -38,6 +38,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
 
     best_epoch = -1
     best_val_score = -np.inf
+    best_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
     mb = master_bar(range(cfg.data.train.epochs))
 
     train_loss_list = []
@@ -52,18 +53,14 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         for images, labels in progress_bar(train_loader, parent=mb):
             images = images.to(device)
             labels = labels.to(device)
-            if cfg.model.n_classes == 1:
-                labels = labels.float()
 
             if not cfg.model.metric:
                 preds = model(images.float())
             else:
                 features = model(images.float())
                 preds = metric_fc(features, labels)
-            
-            if cfg.model.n_classes == 1:
-                preds = preds.view(-1)
-            loss = criterion(preds, labels)
+
+            loss = criterion(preds.view(labels.shape), labels.float())
 
             optimizer.zero_grad()
             loss.backward()
@@ -74,13 +71,12 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         model.eval()
         valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
         avg_val_loss = 0.
+        coef = [0.5, 1.5, 2.5, 3.5, 4.5]
         valid_batch_size = valid_loader.batch_size
 
         for i, (images, labels) in enumerate(valid_loader):
             images = images.to(device)
             labels = labels.to(device)
-            if cfg.model.n_classes == 1:
-                labels = labels.float()
 
             if not cfg.model.metric:
                 preds = model(images.float())
@@ -88,9 +84,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
                 features = model(images.float())
                 preds = metric_fc(features, labels)
 
-            if cfg.model.n_classes == 1:
-                preds = preds.view(-1)
-            loss = criterion(preds, labels)
+            loss = criterion(preds.view(labels.shape), labels.float())
             valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
             avg_val_loss += loss.item() / len(valid_loader)
 
@@ -99,8 +93,8 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         else:
             optR = QWKOptimizedRounder()
             optR.fit(valid_preds.copy(), val_y)
-            best_coef = optR.coefficients()
-            valid_preds_class = optR.predict(valid_preds.copy(), best_coef)
+            coef = optR.coefficients()
+            valid_preds_class = optR.predict(valid_preds.copy(), coef)
             val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
 
 
@@ -121,6 +115,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             best_val_score = val_score
             best_valid_preds = valid_preds
             best_model = model.state_dict()
+            best_coef = coef
 
     print('\n\n===================================\n')
     print(f'CV: {best_val_score:.6f}')
@@ -134,6 +129,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
     }
 
     np.save(f'../logs/{run_name}/oof.npy', best_valid_preds)
+    np.save(f'../logs/{run_name}/best_coef.npy', best_coef)
     torch.save(best_model, f'../logs/{run_name}/weight_best.pt')
     save_png(run_name, cfg, train_loss_list, val_loss_list, val_score_list)
     
