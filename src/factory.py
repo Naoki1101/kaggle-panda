@@ -98,6 +98,10 @@ def replace_fc(model, cfg):
           cfg.model.name.startswith('wide_resnet') or
           cfg.model.name.startswith('resnest')):
         model.fc = get_head(cfg.model.head)
+
+    if cfg.common.multi_gpu:
+        model = nn.DataParallel(model)
+
     return model
 
 

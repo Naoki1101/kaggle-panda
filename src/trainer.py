@@ -32,6 +32,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         metric_fc = getattr(metric, cfg.model.metric.name)(in_features=1000,
                                                            out_features=cfg.model.n_classes,
                                                            **cfg.model.metric.params).to(device)
+    
     criterion = factory.get_loss(cfg)
     optimizer = factory.get_optim(cfg, model.parameters())
     scheduler = factory.get_scheduler(cfg, optimizer)
@@ -113,7 +114,10 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             best_epoch = epoch + 1
             best_val_score = val_score
             best_valid_preds = valid_preds
-            best_model = model.state_dict()
+            if cfg.common.multi_gpu:
+                best_model = model.module.state_dict()
+            else:
+                best_model = model.state_dict()
             best_coef = coef
 
     print('\n\n===================================\n')

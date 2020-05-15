@@ -3,6 +3,7 @@ common:
     img_file: train.csv
     seed: &vars 2020
     drop_fname:
+    multi_gpu: True
     kaggle:
         data: True
         notebook: True
