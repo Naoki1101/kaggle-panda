@@ -9,7 +9,7 @@ python train.py -m 'reg_resnest50' -c 'test regression'
 # python train.py -m 'reg_resnet18' -c 'test regression'
 # python train.py -m 'reg_se_resnext50_32x4d' -c 'test regression'
 
-cd ../
-git add -A
-git commit -m '...'
-git push origin master
+# cd ../
+# git add -A
+# git commit -m '...'
+# git push origin master
