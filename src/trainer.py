@@ -97,7 +97,6 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             valid_preds_class = optR.predict(valid_preds.copy(), coef)
             val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
 
-
         val_loss_list.append(avg_val_loss)
         val_score_list.append(val_score)
 

@@ -23,7 +23,7 @@ class QWKOptimizedRounder(object):
             elif pred >= coef[2] and pred < coef[3]:
                 X_p[i] = 3
             elif pred >= coef[3] and pred < coef[4]:
-                X_p[i] = 3
+                X_p[i] = 4
             else:
                 X_p[i] = 5
 
@@ -46,8 +46,10 @@ class QWKOptimizedRounder(object):
                 X_p[i] = 2
             elif pred >= coef[2] and pred < coef[3]:
                 X_p[i] = 3
-            else:
+            elif pred >= coef[3] and pred < coef[4]:
                 X_p[i] = 4
+            else:
+                X_p[i] = 5
         return X_p
 
     def coefficients(self):

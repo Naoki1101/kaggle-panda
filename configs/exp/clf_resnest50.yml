@@ -23,8 +23,8 @@ data:
         img_type: &img_type tile
         is_train: True
         img_size:
-            width: &wsize 312
-            height: &hsize 312
+            width: &wsize 512
+            height: &hsize 512
         n_channels: *channel
         epochs: 10
         loader:
