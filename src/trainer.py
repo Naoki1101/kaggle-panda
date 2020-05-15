@@ -69,6 +69,8 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             avg_loss += loss.item() / len(train_loader)
         train_loss_list.append(avg_loss)
 
+        del train_loader; gc.collect()
+
         model.eval()
         valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
         avg_val_loss = 0.
