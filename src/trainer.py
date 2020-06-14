@@ -52,8 +52,8 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         avg_loss = 0.
 
         for images, labels in progress_bar(train_loader, parent=mb):
-            images = images.to(device)
-            labels = labels.to(device)
+            images = Variable(images).to(device)
+            labels = Variable(labels).to(device)
 
             if not cfg.model.metric:
                 preds = model(images.float())
@@ -68,14 +68,14 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             optimizer.step()
             avg_loss += loss.item() / len(train_loader)
         train_loss_list.append(avg_loss)
-        del train_loader, images, labels; gc.collect()
+        del images, labels; gc.collect()
 
         model.eval()
         valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
         avg_val_loss = 0.
         coef = [0.5, 1.5, 2.5, 3.5, 4.5]
         valid_batch_size = valid_loader.batch_size
-
+        
         for i, (images, labels) in enumerate(valid_loader):
             images = images.to(device)
             labels = labels.to(device)
@@ -115,7 +115,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             best_epoch = epoch + 1
             best_val_score = val_score
             best_valid_preds = valid_preds
-            if cfg.common.multi_gpu:
+            if cfg.model.multi_gpu:
                 best_model = model.module.state_dict()
             else:
                 best_model = model.state_dict()

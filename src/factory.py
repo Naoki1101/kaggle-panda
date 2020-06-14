@@ -99,9 +99,6 @@ def replace_fc(model, cfg):
           cfg.model.name.startswith('resnest')):
         model.fc = get_head(cfg.model.head)
 
-    if cfg.common.multi_gpu:
-        model = nn.DataParallel(model)
-
     return model
 
 
@@ -126,6 +123,10 @@ def get_model(cfg):
     model = replace_fc(model, cfg)
     if cfg.model.avgpool:
         model = replace_pool(model, cfg)
+
+    if cfg.model.multi_gpu:
+        model = nn.DataParallel(model)
+
     return model
 
 

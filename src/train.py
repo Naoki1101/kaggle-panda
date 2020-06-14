@@ -78,7 +78,7 @@ def main():
             train_y_all = train_y_all.astype(float)
         trn_x, val_x, trn_y, val_y = train_test_split(train_x_all,
                                                       train_y_all,
-                                                      test_size=0.2, 
+                                                      test_size=0.2,
                                                       shuffle=True, 
                                                       random_state=cfg.common.seed,
                                                       stratify=train_x_all['data_provider'])

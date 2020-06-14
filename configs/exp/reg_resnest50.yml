@@ -3,7 +3,6 @@ common:
     img_file: train.csv
     seed: &vars 2020
     drop_fname:
-    multi_gpu: True
     kaggle:
         data: True
         notebook: True
@@ -13,6 +12,7 @@ model:
     n_channels: &channel 3
     n_classes: 1
     pretrained: True
+    multi_gpu: True
     avgpool:
         name: GeM
         params: {}
@@ -39,17 +39,16 @@ data:
             batch_size: 16
             num_workers: 4
         transforms:
-            rotate:
-                name: Rotate
-                params:
-                    p: 0.5
-                    limit: 10
             hflip:
                 name: HorizontalFlip
                 params:
                     p: 0.5
             vflip:
                 name: VerticalFlip
+                params:
+                    p: 0.5
+            brightness:
+                name: RandomBrightnessContrast
                 params:
                     p: 0.5
     valid:
@@ -62,7 +61,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
     test:

@@ -12,6 +12,7 @@ model:
     n_channels: &channel 3
     n_classes: 1
     pretrained: True
+    multi_gpu: True
     avgpool:
         name: GeM
         params: {}
@@ -29,20 +30,15 @@ data:
         img_type: &img_type image
         is_train: True
         img_size:
-            width: &wsize 312
-            height: &hsize 312
+            width: &wsize 512
+            height: &hsize 512
         n_channels: *channel
         epochs: 10
         loader:
             shuffle: True
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
-            rotate:
-                name: Rotate
-                params:
-                    p: 0.5
-                    limit: 10
             hflip:
                 name: HorizontalFlip
                 params:
@@ -61,7 +57,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
     test:
@@ -74,7 +70,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
 
