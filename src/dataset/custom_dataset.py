@@ -20,16 +20,23 @@ def get_transforms(cfg):
 
 
 def concat_tiles(image_list, seed):
-    random.seed(seed)
-    random.shuffle(image_list)
+    image = []
+    row_num = int(np.sqrt(len(image_list)))
 
-    image = cv2.hconcat([
-        cv2.vconcat([image_list[0], image_list[1], image_list[2], image_list[3]]), 
-        cv2.vconcat([image_list[4], image_list[5], image_list[6], image_list[7]]), 
-        cv2.vconcat([image_list[8], image_list[9], image_list[10], image_list[11]]), 
-        cv2.vconcat([image_list[12], image_list[13], image_list[14], image_list[15]])
-    ])
-    return image
+    for i in range(row_num):
+        v = [image_list[(row_num * i) + j] for j in range(row_num)]
+        image.append(cv2.vconcat(v))
+
+    return cv2.hconcat(image)
+        
+    # image = cv2.hconcat([
+    #     cv2.vconcat([image_list[0], image_list[1], image_list[2], image_list[3], image_list[4]]), 
+    #     cv2.vconcat([image_list[5], image_list[6], image_list[7], image_list[8], image_list[9]]), 
+    #     cv2.vconcat([image_list[10], image_list[11], image_list[12], image_list[13], image_list[14]]), 
+    #     cv2.vconcat([image_list[15], image_list[16], image_list[17], image_list[18], image_list[19]]),
+    #     cv2.vconcat([image_list[20], image_list[21], image_list[22], image_list[23], image_list[24]])
+    # ])
+    # return image
 
 
 class CustomDataset(Dataset):

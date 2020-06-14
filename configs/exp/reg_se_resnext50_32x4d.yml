@@ -32,8 +32,8 @@ data:
             level: &img_level 1
         is_train: True
         img_size:
-            width: &wsize 512
-            height: &hsize 512
+            width: &wsize 620
+            height: &hsize 620
         n_channels: *channel
         epochs: 10
         loader:

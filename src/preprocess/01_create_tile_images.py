@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 TRAIN = '../data/input/train_images/'
 sz = 128
-N = 16
+N = 25
 
 
 def tile(img):

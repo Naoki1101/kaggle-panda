@@ -43,8 +43,8 @@ data:
             level: &img_level 1
         is_train: True
         img_size:
-            width: &wsize 512
-            height: &hsize 512
+            width: &wsize 620
+            height: &hsize 620
         n_channels: *channel
         epochs: 10
         loader:
@@ -72,7 +72,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
     test:
