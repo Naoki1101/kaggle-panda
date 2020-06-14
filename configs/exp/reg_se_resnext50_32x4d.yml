@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: se_resnext50_32x4d
@@ -27,7 +27,9 @@ model:
 data:
     train:
         dataset_type: CustomDataset
-        img_type: &img_type image
+        img_type: 
+            name: &img_type tile
+            level: &img_level 1
         is_train: True
         img_size:
             width: &wsize 512
@@ -47,9 +49,15 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
+            trans:
+                name: Transpose
+                params:
+                    p: 0.5
     valid:
         dataset_type: CustomDataset
-        img_type: *img_type
+        img_type: 
+            name: *img_type
+            level: *img_level
         is_train: True
         img_size:
             width: *wsize
@@ -62,7 +70,9 @@ data:
         transforms:
     test:
         dataset_type: CustomDataset
-        img_type: *img_type
+        img_type: 
+            name: *img_type
+            level: *img_level
         is_train: False
         img_size:
             width: *wsize

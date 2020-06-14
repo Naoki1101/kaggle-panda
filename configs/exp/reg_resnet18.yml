@@ -38,7 +38,9 @@ model:
 data:
     train:
         dataset_type: CustomDataset
-        img_type: &img_type image
+        img_type: 
+            name: &img_type tile
+            level: &img_level 1
         is_train: True
         img_size:
             width: &wsize 512
@@ -60,7 +62,9 @@ data:
                     p: 0.5
     valid:
         dataset_type: CustomDataset
-        img_type: *img_type
+        img_type: 
+            name: *img_type
+            level: *img_level
         is_train: True
         img_size:
             width: *wsize
@@ -73,7 +77,9 @@ data:
         transforms:
     test:
         dataset_type: CustomDataset
-        img_type: *img_type
+        img_type:
+            name: *img_type
+            level: *img_level
         is_train: False
         img_size:
             width: *wsize
