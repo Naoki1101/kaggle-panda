@@ -47,23 +47,18 @@ class CustomDataset(Dataset):
         self.transforms = get_transforms(self.cfg)
         self.is_train = cfg.is_train
         self.img_type = cfg.img_type
-        if self.img_type.name == 'image':
-            self.image_path = '../data/input/train_images'
-        elif self.img_type.name == 'tile':
-            self.image_path = '../data/input/train_tile_images'
+        self.image_path = '../data/input/train_images_medium/train_medium_25_256_256'
+    
 
     def __len__(self):
         return len(self.image_ids)
 
     def __getitem__(self, idx):
         image_id = self.image_ids[idx]
-        if self.img_type.name == 'image':
-            image = cv2.imread(f'{self.image_path}/{image_id}_{self.img_type.level}.jpeg')
-        elif self.img_type.name == 'tile':
-            tiles = []
-            for i in range(16):
-                tiles.append(np.load(f'{self.image_path}/{image_id}_{self.img_type.level}_{i}.npy'))
-            image = concat_tiles(tiles, idx)
+        tiles = []
+        for i in range(16):
+            tiles.append(np.load(f'{self.image_path}/{image_id}_{self.img_type.level}_{i}.npy'))
+        image = concat_tiles(tiles, idx)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)
         image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:

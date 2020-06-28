@@ -43,13 +43,13 @@ data:
             level: &img_level 1
         is_train: True
         img_size:
-            width: &wsize 620
-            height: &hsize 620
+            width: &wsize 1280
+            height: &hsize 1280
         n_channels: *channel
         epochs: 10
         loader:
             shuffle: True
-            batch_size: 16
+            batch_size: 4
             num_workers: 4
         transforms:
             hflip:
@@ -72,7 +72,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 8
+            batch_size: 4
             num_workers: 4
         transforms:
     test:
@@ -87,7 +87,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 4
             num_workers: 4
         transforms:
 
