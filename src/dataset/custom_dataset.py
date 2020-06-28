@@ -46,7 +46,6 @@ class CustomDataset(Dataset):
         self.labels = labels
         self.transforms = get_transforms(self.cfg)
         self.is_train = cfg.is_train
-        self.img_type = cfg.img_type
         self.image_path = '../data/input/train_images_medium/train_medium_25_256_256'
     
 
@@ -56,14 +55,15 @@ class CustomDataset(Dataset):
     def __getitem__(self, idx):
         image_id = self.image_ids[idx]
         tiles = []
-        for i in range(16):
-            tiles.append(cv2.imread(f'{self.image_path}/{image_id}_{self.img_type.level}_{i}.png'))
+        for i in range(25):
+            tiles.append(cv2.imread(f'{self.image_path}/{image_id}_{i}.png'))
         image = concat_tiles(tiles, idx)
-        image = 255 - (image * (255.0/image.max())).astype(np.uint8)
-        image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
+        # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:
             image = self.transforms(image=image)['image']
-        image = image.transpose(2, 0, 1).astype(np.float32)
+        images = images.astype(np.float32)
+        images /= 255
+        image = image.transpose(2, 0, 1)
 
         if self.is_train:
             label = self.labels.values[idx]
