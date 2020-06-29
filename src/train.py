@@ -81,7 +81,7 @@ def main():
                                                       test_size=0.2,
                                                       shuffle=True, 
                                                       random_state=cfg.common.seed,
-                                                      stratify=train_y_all['isup_grade'])
+                                                      stratify=train_df['isup_grade'])
 
     with t.timer('train model'):
         result = train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg)
