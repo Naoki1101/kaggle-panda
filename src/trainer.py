@@ -100,8 +100,6 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             valid_preds_class = optR.predict(valid_preds.copy(), coef)
             val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
             cm = confusion_matrix(val_y, valid_preds_class)
-        print(cm)
-        logging.debug(cm)
 
         val_loss_list.append(avg_val_loss)
         val_score_list.append(val_score)
@@ -124,6 +122,12 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             else:
                 best_model = model.state_dict()
             best_coef = coef
+            best_cm = cm
+
+    print('\n\nCONFUSION MATRIX')
+    logging.debug('\n\nCONFUSION MATRIX')
+    print(cm)
+    logging.debug(cm)
 
     print('\n\n===================================\n')
     print(f'CV: {best_val_score:.6f}')
