@@ -58,12 +58,11 @@ class CustomDataset(Dataset):
         for i in range(25):
             tiles.append(cv2.imread(f'{self.image_path}/{image_id}_{i}.png'))
         image = concat_tiles(tiles, idx)
+        image = 255 - (image * (255.0/image.max())).astype(np.uint8)
         # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:
             image = self.transforms(image=image)['image']
-        image = image.astype(np.float32)
-        image /= 255
-        image = image.transpose(2, 0, 1)
+        image = image.transpose(2, 0, 1).astype(np.float32)
 
         if self.is_train:
             label = self.labels.values[idx]
