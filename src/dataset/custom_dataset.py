@@ -19,7 +19,7 @@ def get_transforms(cfg):
         return None
 
 
-def concat_tiles(image_list, seed):
+def concat_tiles(image_list):
     image = []
     row_num = int(np.sqrt(len(image_list)))
 
@@ -57,7 +57,7 @@ class CustomDataset(Dataset):
         tiles = []
         for i in range(25):
             tiles.append(cv2.imread(f'{self.image_path}/{image_id}_{i}.png'))
-        image = concat_tiles(tiles, idx)
+        image = concat_tiles(tiles)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)
         # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:

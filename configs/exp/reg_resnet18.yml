@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnet18
@@ -43,7 +43,7 @@ data:
             width: &wsize 1280
             height: &hsize 1280
         n_channels: *channel
-        epochs: 10
+        epochs: 1
         loader:
             shuffle: True
             batch_size: 8

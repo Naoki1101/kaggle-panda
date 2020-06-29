@@ -29,7 +29,7 @@ class QWKOptimizedRounder(object):
 
     def fit(self, X, y):
         loss_partial = partial(self._kappa_loss, X=X, y=y)
-        initial_coef = [i + 0.5 for i in range(10)]
+        initial_coef = [i + 0.5 for i in range(5)]
         self.coef_ = sp.optimize.minimize(loss_partial, initial_coef, method='nelder-mead')
 
     def predict(self, X, coef):

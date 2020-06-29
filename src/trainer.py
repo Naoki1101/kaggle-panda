@@ -4,7 +4,7 @@ import logging
 from fastprogress import master_bar, progress_bar
 import numpy as np
 
-from sklearn.metrics import recall_score
+from sklearn.metrics import confusion_matrix
 
 import torch
 import torch.nn as nn
@@ -92,12 +92,16 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
 
         if cfg.model.n_classes > 1:
             val_score = quadratic_weighted_kappa(val_y, valid_preds.argmax(1))
+            cm = confusion_matrix(val_y, valid_preds.argmax(1))
         else:
             optR = QWKOptimizedRounder()
             optR.fit(valid_preds.copy(), val_y)
             coef = optR.coefficients()
             valid_preds_class = optR.predict(valid_preds.copy(), coef)
             val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
+            cm = confusion_matrix(val_y, valid_preds_class)
+        print(cm)
+        logging.debug(cm)
 
         val_loss_list.append(avg_val_loss)
         val_score_list.append(val_score)
