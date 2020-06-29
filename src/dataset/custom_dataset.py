@@ -61,8 +61,8 @@ class CustomDataset(Dataset):
         # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:
             image = self.transforms(image=image)['image']
-        images = images.astype(np.float32)
-        images /= 255
+        image = image.astype(np.float32)
+        image /= 255
         image = image.transpose(2, 0, 1)
 
         if self.is_train:
