@@ -17,6 +17,9 @@ model:
         name: GeM
         params: {}
     head:
+        act:
+            name: ReLU
+            params: {}
         linear:
             name: Linear
             params:
@@ -32,8 +35,8 @@ data:
             level: &img_level 1
         is_train: True
         img_size:
-            width: &wsize 620
-            height: &hsize 620
+            width: &wsize 1280
+            height: &hsize 1280
         n_channels: *channel
         epochs: 10
         loader:
@@ -49,10 +52,10 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
-            trans:
-                name: Transpose
-                params:
-                    p: 0.5
+            # trans:
+            #     name: Transpose
+            #     params:
+            #         p: 0.5
     valid:
         dataset_type: CustomDataset
         img_type: 
@@ -65,7 +68,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 8
+            batch_size: 4
             num_workers: 4
         transforms:
     test:
@@ -80,7 +83,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 8
+            batch_size: 4
             num_workers: 4
         transforms:
 
@@ -96,5 +99,5 @@ optimizer:
 scheduler:
     name: CosineAnnealingLR
     params:
-        eta_min: 0.00001
+        eta_min: 0.000001
         T_max: 10
