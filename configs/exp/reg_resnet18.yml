@@ -43,7 +43,7 @@ data:
             width: &wsize 1280
             height: &hsize 1280
         n_channels: *channel
-        epochs: 15
+        epochs: 10
         loader:
             shuffle: True
             batch_size: 8
@@ -55,6 +55,10 @@ data:
                     p: 0.5
             vflip:
                 name: VerticalFlip
+                params:
+                    p: 0.5
+            trans:
+                name: Transpose
                 params:
                     p: 0.5
     valid:
