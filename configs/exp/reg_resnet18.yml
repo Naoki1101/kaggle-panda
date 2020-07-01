@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnet18
@@ -17,9 +17,9 @@ model:
         name: GeM
         params: {}
     head:
-        act:
-            name: ReLU
-            params: {}
+        # act:
+        #     name: ReLU
+        #     params: {}
         # batch_norm: 
         #     name: BatchNorm1d
         #     params:

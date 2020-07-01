@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnet50
@@ -46,7 +46,7 @@ data:
         epochs: 10
         loader:
             shuffle: True
-            batch_size: 4
+            batch_size: 2
             num_workers: 4
         transforms:
             hflip:
@@ -66,7 +66,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 4
+            batch_size: 2
             num_workers: 4
         transforms:
     test:
@@ -78,7 +78,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 4
+            batch_size: 2
             num_workers: 4
         transforms:
 
