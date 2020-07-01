@@ -30,9 +30,6 @@ model:
 data:
     train:
         dataset_type: CustomDataset
-        img_type: 
-            name: &img_type tile
-            level: &img_level 1
         is_train: True
         img_size:
             width: &wsize 1280
@@ -68,7 +65,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 4
+            batch_size: 2
             num_workers: 4
         transforms:
     test:
@@ -83,7 +80,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 4
+            batch_size: 2
             num_workers: 4
         transforms:
 
