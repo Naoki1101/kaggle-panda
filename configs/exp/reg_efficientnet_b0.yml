@@ -4,11 +4,11 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: False
-        notebook: False
+        data: True
+        notebook: True
 
 model:
-    name: resnet50
+    name: efficientnet_b3
     n_channels: &channel 3
     n_classes: 1
     pretrained: True
@@ -17,9 +17,9 @@ model:
         name: GeM
         params: {}
     head:
-        act:
-            name: ReLU
-            params: {}
+        # act:
+        #     name: ReLU
+        #     params: {}
         # batch_norm: 
         #     name: BatchNorm1d
         #     params:
@@ -31,12 +31,11 @@ model:
         linear:
             name: Linear
             params:
-                in_features: 2048
+                in_features: 1536
                 out_features: 1
     metric:
 
 data:
-    target: isup_grade
     train:
         dataset_type: CustomDataset
         is_train: True
@@ -58,6 +57,10 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
+            trans:
+                name: Transpose
+                params:
+                    p: 0.5
     valid:
         dataset_type: CustomDataset
         is_train: True
@@ -67,7 +70,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 2
+            batch_size: 1
             num_workers: 4
         transforms:
     test:

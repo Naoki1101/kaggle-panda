@@ -2,7 +2,8 @@ common:
     input_root: ../data/input/
     img_file: train.csv
     seed: &vars 2020
-    drop_fname:
+    drop:
+        name: duplicate_img_idx
     kaggle:
         data: False
         notebook: False
@@ -10,35 +11,45 @@ common:
 model:
     name: resnet18
     n_channels: &channel 3
-    n_classes: 6
+    n_classes: &class 6
     pretrained: True
+    multi_gpu: True
     avgpool:
         name: GeM
         params: {}
+    head:
+        # act:
+        #     name: ReLU
+        #     params: {}
+        # batch_norm: 
+        #     name: BatchNorm1d
+        #     params:
+        #         num_features: 512
+        # drop:
+        #     name: Dropout
+        #     params:
+        #         p: 0.5
+        linear:
+            name: Linear
+            params:
+                in_features: 512
+                out_features: *class
     metric:
 
 data:
     train:
         dataset_type: CustomDataset
-        img_type: 
-            name: &img_type image
-            level: &img_level 2
         is_train: True
         img_size:
-            width: &wsize 512
-            height: &hsize 512
+            width: &wsize 1280
+            height: &hsize 1280
         n_channels: *channel
-        epochs: 5
+        epochs: 10
         loader:
             shuffle: True
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
-            rotate:
-                name: Rotate
-                params:
-                    p: 0.5
-                    limit: 10
             hflip:
                 name: HorizontalFlip
                 params:
@@ -47,11 +58,12 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
+            trans:
+                name: Transpose
+                params:
+                    p: 0.5
     valid:
         dataset_type: CustomDataset
-        img_type: 
-            name: *img_type
-            level: *img_level
         is_train: True
         img_size:
             width: *wsize
@@ -59,14 +71,11 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 4
             num_workers: 4
         transforms:
     test:
         dataset_type: CustomDataset
-        img_type: 
-            name: *img_type
-            level: *img_level
         is_train: False
         img_size:
             width: *wsize
@@ -74,12 +83,12 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 4
             num_workers: 4
         transforms:
 
 loss: 
-    name: CustomSmoothCrossEntropyLoss
+    name: SmoothCrossEntropyLoss
     params:
         smoothing: 0.1
 
@@ -92,7 +101,7 @@ scheduler:
     name: CosineAnnealingLR
     params:
         eta_min: 0.00001
-        T_max: 30
+        T_max: 10
     # name: ReduceLROnPlateau
     # params:
     #     mode: min

@@ -27,9 +27,8 @@ class QWKOptimizedRounder(object):
         ll = quadratic_weighted_kappa(y, X_p.astype(int))
         return -ll
 
-    def fit(self, X, y):
+    def fit(self, X, y, initial_coef):
         loss_partial = partial(self._kappa_loss, X=X, y=y)
-        initial_coef = [i + 0.5 for i in range(5)]
         self.coef_ = sp.optimize.minimize(loss_partial, initial_coef, method='nelder-mead')
 
     def predict(self, X, coef):

@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import factory
-from models import metric
 from metrics import quadratic_weighted_kappa, QWKOptimizedRounder
 
 
@@ -28,10 +27,6 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
     valid_loader = factory.get_dataloader(val_x, val_y, cfg.data.valid)
 
     model = factory.get_model(cfg).to(device)
-    if cfg.model.metric:
-        metric_fc = getattr(metric, cfg.model.metric.name)(in_features=1000,
-                                                           out_features=cfg.model.n_classes,
-                                                           **cfg.model.metric.params).to(device)
     
     criterion = factory.get_loss(cfg)
     optimizer = factory.get_optim(cfg, model.parameters())
@@ -55,13 +50,12 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             images = Variable(images).to(device)
             labels = Variable(labels).to(device)
 
-            if not cfg.model.metric:
-                preds = model(images.float())
-            else:
-                features = model(images.float())
-                preds = metric_fc(features, labels)
+            preds = model(images.float())
 
-            loss = criterion(preds.view(labels.shape), labels.float())
+            if cfg.model.n_classes > 1:
+                loss = criterion(preds, labels)
+            else:
+                loss = criterion(preds.view(labels.shape), labels.float())
 
             optimizer.zero_grad()
             loss.backward()
@@ -69,37 +63,39 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
             avg_loss += loss.item() / len(train_loader)
         train_loss_list.append(avg_loss)
         del images, labels; gc.collect()
-
+        
         model.eval()
         valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
         avg_val_loss = 0.
-        coef = [0.5, 1.5, 2.5, 3.5, 4.5]
+        initial_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
         valid_batch_size = valid_loader.batch_size
         
-        for i, (images, labels) in enumerate(valid_loader):
-            images = images.to(device)
-            labels = labels.to(device)
+        with torch.no_grad():
+            for i, (images, labels) in enumerate(valid_loader):
+                images = images.to(device)
+                labels = labels.to(device)
 
-            if not cfg.model.metric:
                 preds = model(images.float())
-            else:
-                features = model(images.float())
-                preds = metric_fc(features, labels)
 
-            loss = criterion(preds.view(labels.shape), labels.float())
-            valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
-            avg_val_loss += loss.item() / len(valid_loader)
+                if cfg.model.n_classes > 1:
+                    loss = criterion(preds, labels)
+                else:
+                    loss = criterion(preds.view(labels.shape), labels.float())
+                valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
+                avg_val_loss += loss.item() / len(valid_loader)
 
         if cfg.model.n_classes > 1:
             val_score = quadratic_weighted_kappa(val_y, valid_preds.argmax(1))
             cm = confusion_matrix(val_y, valid_preds.argmax(1))
         else:
             optR = QWKOptimizedRounder()
-            optR.fit(valid_preds.copy(), val_y)
+            optR.fit(valid_preds.copy(), val_y, initial_coef)
             coef = optR.coefficients()
             valid_preds_class = optR.predict(valid_preds.copy(), coef)
             val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
             cm = confusion_matrix(val_y, valid_preds_class)
+        
+        # cm = np.round(cm / np.sum(cm, axis=1, keepdims=True), 3)
 
         val_loss_list.append(avg_val_loss)
         val_score_list.append(val_score)
@@ -121,7 +117,8 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
                 best_model = model.module.state_dict()
             else:
                 best_model = model.state_dict()
-            best_coef = coef
+            if cfg.model.n_classes == 1:
+                best_coef = coef
             best_cm = cm
 
     print('\n\nCONFUSION MATRIX')

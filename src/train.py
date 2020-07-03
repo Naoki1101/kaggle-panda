@@ -67,8 +67,8 @@ def main():
         train_df = dh.load(root / cfg.common.img_file)
 
     with t.timer('drop several rows'):
-        if cfg.common.drop_fname is not None:
-            drop_idx = dh.load(f'../pickle/{cfg.common.drop_fname}.npy')
+        if cfg.common.drop.name is not None:
+            drop_idx = dh.load(f'../pickle/{cfg.common.drop.name}.npy')
             train_df = train_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
     with t.timer('make folds'):
