@@ -55,7 +55,7 @@ class CustomDataset(Dataset):
     def __getitem__(self, idx):
         image_id = self.image_ids[idx]
         tiles = []
-        for i in range(36):
+        for i in range((self.cfg.img_size.height // 256) ** 2):
             tile = cv2.imread(f'{self.image_path}/{image_id}_{i}.png')
             # if self.transforms:
             #     tile = self.transforms(image=tile)['image']

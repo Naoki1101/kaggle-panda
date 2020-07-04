@@ -5,8 +5,8 @@ common:
     drop:
         name: duplicate_img_idx
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnet18
@@ -41,8 +41,8 @@ data:
         dataset_type: CustomDataset
         is_train: True
         img_size:
-            width: &wsize 1536
-            height: &hsize 1536
+            width: &wsize 1280
+            height: &hsize 1280
         n_channels: *channel
         epochs: 10
         loader:
@@ -60,6 +60,10 @@ data:
                     p: 0.5
             trans:
                 name: Transpose
+                params:
+                    p: 0.5
+            blur:
+                name: Blur
                 params:
                     p: 0.5
     valid:
