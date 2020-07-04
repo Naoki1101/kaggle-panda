@@ -60,7 +60,7 @@ class CustomDataset(Dataset):
             # if self.transforms:
             #     tile = self.transforms(image=tile)['image']
             tiles.append(tile)
-            if cfg.is_train:
+            if self.transforms:
                 random.shuffle(tiles)
         image = concat_tiles(tiles)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)
