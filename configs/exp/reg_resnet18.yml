@@ -41,8 +41,8 @@ data:
         dataset_type: CustomDataset
         is_train: True
         img_size:
-            width: &wsize 1280
-            height: &hsize 1280
+            width: &wsize 1536
+            height: &hsize 1536
         n_channels: *channel
         epochs: 10
         loader:
@@ -60,10 +60,6 @@ data:
                     p: 0.5
             trans:
                 name: Transpose
-                params:
-                    p: 0.5
-            blur:
-                name: Blur
                 params:
                     p: 0.5
     valid:
@@ -87,7 +83,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 8
+            batch_size: 2
             num_workers: 4
         transforms:
 
