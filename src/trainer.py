@@ -96,13 +96,13 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         start_time = time.time()
 
         model, train_loss_list = train_epoch(model, 
-                                             loader, 
+                                             train_loader, 
                                              criterion, 
                                              optimizer, 
                                              scheduler,
                                              cfg)
         model, val_loss_list, valid_preds = val_epoch(model, 
-                                                      loader, 
+                                                      valid_loaders, 
                                                       criterion, 
                                                       optimizer, 
                                                       scheduler, 
