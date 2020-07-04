@@ -5,8 +5,8 @@ common:
     drop:
         name: duplicate_img_idx
     kaggle:
-        data: False
-        notebook: False
+        data: True
+        notebook: True
 
 model:
     name: resnet18
