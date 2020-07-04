@@ -22,13 +22,13 @@ cd ../src
 
 python train.py -m 'reg_resnet18' -c 'shuffle tiles'
 # python train.py -m 'reg_resnet34' -c 'img_size=1280'
-# python train.py -m 'reg_resnet50' -c 'img_size=1280'
+# python train.py -m 'reg_resnet50' -c 'img_size=1280'a
 
 # python train.py -m 'reg_se_resnext50_32x4d' -c 'img_size=1280'
 
 
 
-cd ../
-git add -A
-git commit -m '...'
-git push origin master
+# cd ../
+# git add -A
+# git commit -m '...'
+# git push origin master

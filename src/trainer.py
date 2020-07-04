@@ -20,7 +20,7 @@ import factory
 from metrics import quadratic_weighted_kappa, QWKOptimizedRounder
 
 
-def train_epoch(model, loader, criterion, optimizer, scheduler, cfg):
+def train_epoch(model, loader, mb, criterion, optimizer, scheduler, cfg):
     train_loss_list = []
     avg_loss = 0.
 
@@ -97,6 +97,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
 
         model, train_loss_list = train_epoch(model, 
                                              train_loader, 
+                                             mb,
                                              criterion, 
                                              optimizer, 
                                              scheduler,
