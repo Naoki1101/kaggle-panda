@@ -58,10 +58,10 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
-            trans:
-                name: Transpose
+            blur:
+                name: blur
                 params:
-                    p: 0.5
+                    p: 0.2
     valid:
         dataset_type: CustomDataset
         is_train: True
