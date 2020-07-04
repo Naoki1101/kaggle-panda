@@ -20,6 +20,96 @@ import factory
 from metrics import quadratic_weighted_kappa, QWKOptimizedRounder
 
 
+def train_epoch(model, loader, criterion, optimizer, scheduler, cfg):
+    train_loss_list = []
+    avg_loss = 0.
+
+    model.train()
+    for images, labels in progress_bar(loader, parent=mb):
+        images = Variable(images).to(device)
+        labels = Variable(labels).to(device)
+
+        preds = model(images.float())
+
+        if cfg.model.n_classes > 1:
+            loss = criterion(preds, labels)
+        else:
+            loss = criterion(preds.view(labels.shape), labels.float())
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        avg_loss += loss.item() / len(loader)
+    train_loss_list.append(avg_loss)
+    del images, labels; gc.collect()
+
+    return model, train_loss_list
+
+
+def val_epoch(model, loader, criterion, optimizer, scheduler, cfg):
+    val_loss_list = []
+    avg_val_loss = 0.
+
+    model.eval()
+    valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
+    avg_val_loss = 0.
+    initial_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
+    valid_batch_size = valid_loader.batch_size
+        
+    with torch.no_grad():
+        for i, (images, labels) in enumerate(loader):
+            images = images.to(device)
+            labels = labels.to(device)
+
+            preds = model(images.float())
+
+            if cfg.model.n_classes > 1:
+                loss = criterion(preds, labels)
+            else:
+                loss = criterion(preds.view(labels.shape), labels.float())
+            valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
+            avg_val_loss += loss.item() / len(loader)
+
+    val_loss_list.append(avg_val_loss)
+
+    return model, val_loss_list, valid_preds
+
+
+def train_reg(run_name, trn_x, val_x, trn_y, val_y, cfg):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    train_loader = factory.get_dataloader(trn_x, trn_y, cfg.data.train)
+    valid_loader = factory.get_dataloader(val_x, val_y, cfg.data.valid)
+
+    model = factory.get_model(cfg).to(device)
+    
+    criterion = factory.get_loss(cfg)
+    optimizer = factory.get_optim(cfg, model.parameters())
+    scheduler = factory.get_scheduler(cfg, optimizer)
+
+    best_epoch = -1
+    best_val_score = -np.inf
+    best_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
+    mb = master_bar(range(cfg.data.train.epochs))
+
+    for epoch in mb:
+        start_time = time.time()
+
+        model, train_loss_list = train_epoch(model, 
+                                             loader, 
+                                             criterion, 
+                                             optimizer, 
+                                             scheduler,
+                                             cfg)
+        model, val_loss_list, valid_preds = val_epoch(model, 
+                                                      loader, 
+                                                      criterion, optimizer, scheduler, cfg)
+
+
+
+
+
+
 def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

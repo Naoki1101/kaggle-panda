@@ -32,7 +32,12 @@ model:
         linear:
             name: Linear
             params:
-                in_features: 512
+                in_features: 128
+                out_features: 1
+        linear:
+            name: Linear
+            params:
+                in_features: 128
                 out_features: 1
     metric:
 
@@ -58,10 +63,10 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
-            blur:
-                name: Blur
+            trans:
+                name: Transpose
                 params:
-                    p: 0.2
+                    p: 0.5
     valid:
         dataset_type: CustomDataset
         is_train: True
