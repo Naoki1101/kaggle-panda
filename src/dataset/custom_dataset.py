@@ -46,7 +46,7 @@ class CustomDataset(Dataset):
         self.labels = labels
         self.transforms = get_transforms(self.cfg)
         self.is_train = cfg.is_train
-        self.image_path = '../data/input/train_images_medium/train_medium_25_256_256'
+        self.image_path = '../data/input/train_tile_256x36'
     
 
     def __len__(self):
@@ -55,7 +55,7 @@ class CustomDataset(Dataset):
     def __getitem__(self, idx):
         image_id = self.image_ids[idx]
         tiles = []
-        for i in range(25):
+        for i in range(36):
             tile = cv2.imread(f'{self.image_path}/{image_id}_{i}.png')
             # if self.transforms:
             #     tile = self.transforms(image=tile)['image']
