@@ -59,7 +59,7 @@ data:
                 params:
                     p: 0.5
             blur:
-                name: blur
+                name: Blur
                 params:
                     p: 0.2
     valid:
