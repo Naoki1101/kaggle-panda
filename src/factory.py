@@ -104,8 +104,9 @@ def replace_fc(model, cfg):
           cfg.model.name.startswith('resnest')):
         model.fc = get_head(cfg.model.head)
     elif cfg.model.name.startswith('ghostnet'):
-        fc_input = getattr(model.classifier[-1], 'in_features')
-        model.classifier[-1] = nn.Linear(fc_input, classes)
+        model.classifier = get_head(cfg.model.head)
+        # fc_input = getattr(model.classifier[-1], 'in_features')
+        # model.classifier[-1] = nn.Linear(fc_input, classes)
 
     return model
 
