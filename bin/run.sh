@@ -7,7 +7,7 @@ cd ../src
 
 # python train.py -m 'clf_resnest50' -c '...'
 
-python train.py -m 'clf_resnet18' -c 'img_size=1280'
+# python train.py -m 'clf_resnet18' -c 'img_size=1280'
 # python train.py -m 'clf_resnet50' -c '...'
 
 # python train.py -m 'clf_se_resnext50_32x4d' -c 'SmoothCrossEntropyLoss'
@@ -17,6 +17,8 @@ python train.py -m 'clf_resnet18' -c 'img_size=1280'
 # Regression
 # =============================================================================
 # python train.py -m 'reg_efficientnet_b0' -c 'test'
+
+python train.py -m 'reg_ghostnet' -c 'test'
 
 # python train.py -m 'reg_resnest50' -c '...'
 

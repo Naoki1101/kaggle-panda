@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 
 import loss
 import layer
-from models import efficientnet, resnet, resnest, senet
+from models import efficientnet, resnet, resnest, senet, ghostnet
 from dataset.custom_dataset import CustomDataset
 
 model_encoder = {
@@ -38,6 +38,9 @@ model_encoder = {
     # senet
     'se_resnext50_32x4d': senet.se_resnext50_32x4d,
     'se_resnext101_32x4d': senet.se_resnext101_32x4d,
+
+    # ghostnet
+    'ghostnet': ghostnet.ghost_net
 }
 
 
@@ -65,6 +68,8 @@ def replace_channels(model, cfg):
         set_channels(model.conv1, cfg)
     elif cfg.model.name.startswith('resnest'):
         set_channels(model.conv1[0], cfg)
+    elif cfg.model.name.startswith('ghostnet'):
+        set_channels(model.features[0][0], cfg)
 
 
 def get_head(cfg):
@@ -98,6 +103,9 @@ def replace_fc(model, cfg):
           cfg.model.name.startswith('wide_resnet') or
           cfg.model.name.startswith('resnest')):
         model.fc = get_head(cfg.model.head)
+    elif cfg.model.name.startswith('ghostnet'):
+        fc_input = getattr(model.classifier[-1], 'in_features')
+        model.classifier[-1] = nn.Linear(fc_input, classes)
 
     return model
 
@@ -113,6 +121,8 @@ def replace_pool(model, cfg):
           cfg.model.name.startswith('wide_resnet') or
           cfg.model.name.startswith('resnest')):
         model.avgpool = avgpool
+    elif cfg.model.name.startswith('ghostnet'):
+        model.squeeze[-1] = avgpool
     return model
 
 

@@ -71,7 +71,7 @@ def gradcam(model, image_id):
     return sal
 
 def main():
-    log_dir = Path('../logs/reg_resnet18_20200704232532_0.872/')
+    log_dir = Path('../logs/clf_resnet18_20200703133354_0.827/')
     cfg = dh.load(log_dir / 'config.yml')
     oof = np.load(log_dir / 'oof.npy')
 
