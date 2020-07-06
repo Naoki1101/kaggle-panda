@@ -41,13 +41,13 @@ data:
         dataset_type: CustomDataset
         is_train: True
         img_size:
-            width: &wsize 1024
-            height: &hsize 1024
+            width: &wsize 1536
+            height: &hsize 1536
         n_channels: *channel
-        epochs: 10
+        epochs: 50
         loader:
             shuffle: True
-            batch_size: 32
+            batch_size: 16
             num_workers: 4
         transforms:
             hflip:
@@ -71,7 +71,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
     test:
@@ -83,7 +83,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 4
+            batch_size: 2
             num_workers: 4
         transforms:
 

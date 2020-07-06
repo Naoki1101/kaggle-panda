@@ -1,12 +1,9 @@
 import os
 import random
 import cv2
-import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset
 import albumentations as album
-
-tile_df = pd.read_csv('../data/input/tile_sort.csv')
 
 
 def get_transforms(cfg):
@@ -47,9 +44,8 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         image_id = self.image_ids[idx]
-        tile_ids = tile_df[tile_df['image_id'] == image_id].iloc[0, 1:17].values
         tiles = []
-        for i in tile_ids:
+        for i in range((self.cfg.img_size.height // 256) ** 2):
             tile = cv2.imread(f'{self.image_path}/{image_id}_{i}.png')
             if self.transforms:
                 tile = self.transforms(image=tile)['image']
