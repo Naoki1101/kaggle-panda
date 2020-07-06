@@ -44,7 +44,7 @@ data:
             width: &wsize 1536
             height: &hsize 1536
         n_channels: *channel
-        epochs: 50
+        epochs: 10
         loader:
             shuffle: True
             batch_size: 16
