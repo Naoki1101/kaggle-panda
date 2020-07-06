@@ -2,16 +2,15 @@ common:
     input_root: ../data/input/
     img_file: train.csv
     seed: &vars 2020
-    drop:
-        name: duplicate_img_idx
+    drop_fname:
     kaggle:
         data: False
         notebook: False
 
 model:
-    name: resnet18
+    name: se_resnext50_32x4d
     n_channels: &channel 3
-    n_classes: 1
+    n_classes: 4
     pretrained: True
     multi_gpu: True
     avgpool:
@@ -32,24 +31,30 @@ model:
         linear1:
             name: Linear
             params:
-                in_features: 512
-                out_features: 1
+                in_features: 2048
+                out_features: 4
     metric:
 
 data:
     train:
         dataset_type: CustomDataset
+        img_type: &img_type tile
         is_train: True
         img_size:
-            width: &wsize 1536
-            height: &hsize 1536
+            width: &wsize 256
+            height: &hsize 256
         n_channels: *channel
-        epochs: 50
+        epochs: 10
         loader:
             shuffle: True
-            batch_size: 16
+            batch_size: 64
             num_workers: 4
         transforms:
+            rotate:
+                name: Rotate
+                params:
+                    p: 0.5
+                    limit: 10
             hflip:
                 name: HorizontalFlip
                 params:
@@ -58,12 +63,9 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
-            trans:
-                name: Transpose
-                params:
-                    p: 0.5
     valid:
         dataset_type: CustomDataset
+        img_type: *img_type
         is_train: True
         img_size:
             width: *wsize
@@ -71,11 +73,12 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 8
+            batch_size: 32
             num_workers: 4
         transforms:
     test:
         dataset_type: CustomDataset
+        img_type: *img_type
         is_train: False
         img_size:
             width: *wsize
@@ -83,13 +86,14 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 2
+            batch_size: 32
             num_workers: 4
         transforms:
 
 loss: 
-    name: RMSELoss
-    params: {}
+    name: SmoothCrossEntropyLoss
+    params:
+        smoothing: 0.1
 
 optimizer:
     name: Adam
@@ -97,11 +101,14 @@ optimizer:
         lr: 0.0001
 
 scheduler:
-    # name: CosineAnnealingLR
-    # params:
-    #     eta_min: 0.000001
-    #     T_max: 10
-    name: ReduceLROnPlateau
+    name: CosineAnnealingLR
     params:
-        factor: 0.5
-        patience: 5
+        eta_min: 0.00001
+        T_max: 10
+    # name: ReduceLROnPlateau
+    # params:
+    #     mode: min
+    #     factor: 0.5
+    #     patience: 2
+    #     verbose: True
+    #     eps: 0.000001
