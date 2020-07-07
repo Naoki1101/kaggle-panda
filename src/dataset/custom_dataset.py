@@ -47,16 +47,16 @@ class CustomDataset(Dataset):
         tiles = []
         for i in range((self.cfg.img_size.height // 256) ** 2):
             tile = cv2.imread(f'{self.image_path}/{image_id}_{i}.png')
-            if self.transforms:
-                tile = self.transforms(image=tile)['image']
+            # if self.transforms:
+            #     tile = self.transforms(image=tile)['image']
             tiles.append(tile)
-            if self.transforms:
-                random.shuffle(tiles)
+        # if self.transforms:
+        #     random.shuffle(tiles)
         image = concat_tiles(tiles)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)
         # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
-        # if self.transforms:
-        #     image = self.transforms(image=image)['image']
+        if self.transforms:
+            image = self.transforms(image=image)['image']
         image = image.transpose(2, 0, 1).astype(np.float32)
 
         if self.is_train:
