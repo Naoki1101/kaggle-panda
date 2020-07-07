@@ -5,8 +5,8 @@ common:
     drop:
         name: duplicate_img_idx
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnet18
@@ -25,10 +25,10 @@ model:
         #     name: BatchNorm1d
         #     params:
         #         num_features: 512
-        # drop:
-        #     name: Dropout
-        #     params:
-        #         p: 0.5
+        drop:
+            name: Dropout
+            params:
+                p: 0.5
         linear:
             name: Linear
             params:
