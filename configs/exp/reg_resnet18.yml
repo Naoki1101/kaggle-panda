@@ -18,13 +18,13 @@ model:
         name: GeM
         params: {}
     head:
-        act:
-            name: ReLU
-            params: {}
-        batch_norm: 
-            name: BatchNorm1d
-            params:
-                num_features: 512
+        # act:
+        #     name: ReLU
+        #     params: {}
+        # batch_norm: 
+        #     name: BatchNorm1d
+        #     params:
+        #         num_features: 512
         # drop:
         #     name: Dropout
         #     params:
