@@ -23,8 +23,8 @@ cd ../src
 # python train.py -m 'reg_resnest50' -c '...'
 
 # python train.py -m 'reg_resnet18' -c '...'
-python train.py -m 'reg_resnet34' -c 'img_size=1536'
-# python train.py -m 'reg_resnet50' -c 'img_size=1280'
+# python train.py -m 'reg_resnet34' -c 'img_size=1536'
+python train.py -m 'reg_resnet50' -c 'img_size=1536'
 
 # python train.py -m 'reg_se_resnext50_32x4d' -c 'img_size=768'
 
