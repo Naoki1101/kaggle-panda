@@ -4,8 +4,8 @@ common:
     seed: &vars 2020
     drop_fname:
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: efficientnet_b3
@@ -40,13 +40,13 @@ data:
         dataset_type: CustomDataset
         is_train: True
         img_size:
-            width: &wsize 1280
-            height: &hsize 1280
+            width: &wsize 1536
+            height: &hsize 1536
         n_channels: *channel
         epochs: 10
         loader:
             shuffle: True
-            batch_size: 2
+            batch_size: 4
             num_workers: 4
         transforms:
             hflip:
@@ -70,7 +70,7 @@ data:
         n_channels: *channel
         loader:
             shuffle: False
-            batch_size: 1
+            batch_size: 2
             num_workers: 4
         transforms:
     test:

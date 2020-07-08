@@ -5,8 +5,8 @@ common:
     drop:
         name: duplicate_img_idx
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnet18
@@ -47,7 +47,7 @@ data:
         epochs: 10
         loader:
             shuffle: True
-            batch_size: 16
+            batch_size: 8
             num_workers: 4
         transforms:
             hflip:
