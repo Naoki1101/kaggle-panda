@@ -37,7 +37,7 @@ class CustomDataset(Dataset):
         self.labels = labels
         self.transforms = get_transforms(self.cfg)
         self.is_train = cfg.is_train
-        self.image_path = '../data/input/train_tile_256x36'
+        self.image_path = '../data/input/train_tile_256x49'
 
     def __len__(self):
         return len(self.image_ids)
