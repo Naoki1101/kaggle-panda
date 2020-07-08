@@ -40,10 +40,9 @@ def main():
     # drop_idx = df[df['image_id'].isin(drop_image_id)].index.values
 
 
-    max_values = np.max(img_hash_array, axis=1)
-    max_values = max_values - np.eye(max_values.shape[0])
-    high_sim_idx = np.where(np.max(max_values, axis=1) >= 0.96)[0]
-    drop_idx = np.argmax(max_values, axis=1)[high_sim_idx]
+    img_hash_array_ = img_hash_array - np.eye(img_hash_array.shape[0])
+    max_values = np.max(img_hash_array_, axis=1)
+    drop_idx = np.where(max_values >= 0.96)[0]
 
     np.save('../pickle/duplicate_img_idx.npy', drop_idx)
 
