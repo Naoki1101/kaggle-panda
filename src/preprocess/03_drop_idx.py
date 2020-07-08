@@ -1,49 +1,30 @@
+import cv2
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 
 def main():
     train_df = pd.read_csv('../data/input/train.csv')
     img_hash_array = np.load('../data/input/img_hash_sims.npy')
-    # img_df = pd.read_csv('../data/input/img_data.csv', usecols=['image_id', 'aspect_ratio'])
-
-    # df = train_df.merge(img_df, on='image_id', how='left')
-    # sim_idx = np.argsort(img_hash_array, axis=1)[:, -2]
-    # df['sim_image_id'] = [df.loc[idx, 'image_id'] for idx in sim_idx]
-    # df['similarity'] = np.sort(img_hash_array, axis=1)[:, -2]
-
-    # sim_train_df = train_df.copy()
-    # sim_train_df.columns = ['sim_image_id', 'sim_data_provider', 'sim_isup_grade', 'sim_gleason_score']
-    # sim_img_df = img_df.copy()
-    # sim_img_df.columns = ['sim_image_id', 'sim_aspect_ratio']
-
-    # df = pd.merge(df, sim_train_df, on='sim_image_id', how='left')
-    # df = pd.merge(df, sim_img_df, on='sim_image_id', how='left')
-
-    # df_ = df[df['data_provider'] == 'radboud']\
-    #         [df['gleason_score'] == df['sim_gleason_score']]\
-    #         [np.round(df['aspect_ratio'], 4) == np.round(df['sim_aspect_ratio'], 4)]
-
-    # drop_image_id = []
-    # for idx in df_.index:
-    #     img_id = df_.loc[idx, 'image_id']
-        
-    #     if img_id not in drop_image_id:
-    #         drop_image_id.append(img_id)
-    #         sim_img_id = df_.loc[idx, 'sim_image_id']
-
-    #         sim_idxs = df_[df_['image_id'] == sim_img_id].index.values
-    #         if len(sim_idxs) > 0:
-    #             for sim_idx in sim_idxs:
-    #                 df_.loc[sim_idx, 'image_id'] = img_id
-
-    # drop_idx = df[df['image_id'].isin(drop_image_id)].index.values
-
 
     img_hash_array_ = img_hash_array - np.eye(img_hash_array.shape[0])
     max_values = np.max(img_hash_array_, axis=1)
     drop_idx = np.where(max_values >= 0.96)[0]
 
+    # https://www.kaggle.com/c/prostate-cancer-grade-assessment/discussion/159820#914994
+    noise_list = []
+    for id_ in tqdm(train_df['image_id']):
+        for i in range(36):
+            img = cv2.imread(f'../data/input/train_tile_256x36/{id_}_{i}.png')
+            mean_ = np.mean(img[0] / 255.)
+            if mean_ <= 0.3:
+                noise_list.append(f'{id_}_{i}')
+
+    noise_image_list = sorted(set([i.split('_')[0] for i in noise_list]))
+    noise_idx = train_df[train_df['image_id'].isin(noise_image_list)].index.values
+
+    drop_idx = np.concatenate([drop_idx, noise_idx])
     np.save('../pickle/duplicate_img_idx.npy', drop_idx)
 
 
