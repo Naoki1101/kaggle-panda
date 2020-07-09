@@ -5,8 +5,8 @@ common:
     drop:
         name: duplicate_img_idx
     kaggle:
-        data: False
-        notebook: False
+        data: True
+        notebook: True
 
 model:
     name: resnet34
@@ -66,9 +66,9 @@ data:
                 name: Cutout
                 params:
                     p: 0.5
-                    num_holes: 100
-                    max_h_size: 10
-                    max_w_size: 10
+                    num_holes: 50
+                    max_h_size: 20
+                    max_w_size: 20
                     fill_value: 255
     valid:
         dataset_type: CustomDataset
