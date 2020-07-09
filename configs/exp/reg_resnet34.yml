@@ -62,15 +62,14 @@ data:
                 name: Transpose
                 params:
                     p: 0.5
-            gridmask:
-                name: GridMask
+            cutout:
+                name: Cutout
                 params:
                     p: 0.5
-                    num_grid:
-                        - 4
-                        - 8
-                    rotate_limit: 0
-                    mode: 2
+                    num_holes: 100
+                    max_h_size: 10
+                    max_w_size: 10
+                    fill_value: 255
     valid:
         dataset_type: CustomDataset
         is_train: True
