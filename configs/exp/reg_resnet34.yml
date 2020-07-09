@@ -62,14 +62,6 @@ data:
                 name: Transpose
                 params:
                     p: 0.5
-            cutout:
-                name: Cutout
-                params:
-                    p: 0.5
-                    num_holes: 50
-                    max_h_size: 20
-                    max_w_size: 20
-                    fill_value: 255
     valid:
         dataset_type: CustomDataset
         is_train: True
@@ -96,7 +88,7 @@ data:
         transforms:
 
 loss: 
-    name: RMSELoss
+    name: MSELoss
     params: {}
 
 optimizer:
