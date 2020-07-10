@@ -41,13 +41,13 @@ data:
         dataset_type: CustomDataset
         is_train: True
         n_channels: *channel
+        epochs: 1
         img_size:
             width: &wsize 1536
             height: &hsize 1536
         tile:
             size: &tile_size 256
             num: &tile_num 36
-        epochs: 1
         loader:
             shuffle: True
             batch_size: 16

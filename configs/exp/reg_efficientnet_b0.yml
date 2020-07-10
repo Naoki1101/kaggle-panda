@@ -40,14 +40,17 @@ data:
     train:
         dataset_type: CustomDataset
         is_train: True
+        n_channels: *channel
+        epochs: 10
         img_size:
             width: &wsize 1536
             height: &hsize 1536
-        n_channels: *channel
-        epochs: 10
+        tile:
+            size: &tile_size 256
+            num: &tile_num 36
         loader:
             shuffle: True
-            batch_size: 4
+            batch_size: 8
             num_workers: 4
         transforms:
             hflip:
@@ -65,25 +68,31 @@ data:
     valid:
         dataset_type: CustomDataset
         is_train: True
+        n_channels: *channel
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: *channel
+        tile:
+            size: *tile_size
+            num: *tile_num
         loader:
             shuffle: False
-            batch_size: 2
+            batch_size: 4
             num_workers: 4
         transforms:
     test:
         dataset_type: CustomDataset
         is_train: False
+        n_channels: *channel
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: *channel
+        tile:
+            size: *tile_size
+            num: *tile_num
         loader:
             shuffle: False
-            batch_size: 2
+            batch_size: 4
             num_workers: 4
         transforms:
 
