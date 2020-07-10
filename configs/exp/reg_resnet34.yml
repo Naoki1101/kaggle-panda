@@ -1,12 +1,12 @@
 common:
     input_root: ../data/input/
     img_file: train.csv
-    seed: &vars 2023
+    seed: &vars 2024
     drop:
         name: duplicate_img_idx
     kaggle:
-        data: False
-        notebook: False
+        data: True
+        notebook: True
 
 model:
     name: resnet34
