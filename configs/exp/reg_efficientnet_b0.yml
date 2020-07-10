@@ -50,7 +50,7 @@ data:
             num: &tile_num 36
         loader:
             shuffle: True
-            batch_size: 4
+            batch_size: 2
             num_workers: 4
         transforms:
             hflip:
