@@ -22,8 +22,8 @@ cd ../src
 
 # python train.py -m 'reg_resnest50' -c '...'
 
-# python train.py -m 'reg_resnet18' -c 'drop duplicate(new)'
-python train.py -m 'reg_resnet34' -c 'MSELoss'
+python train.py -m 'reg_resnet18' -c 'test'
+# python train.py -m 'reg_resnet34' -c 'MSELoss'
 # python train.py -m 'reg_resnet50' -c 'img_size=c'
 
 # python train.py -m 'reg_se_resnext50_32x4d' -c 'img_size=768'

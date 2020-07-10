@@ -88,7 +88,7 @@ data:
         transforms:
 
 loss: 
-    name: MSELoss
+    name: RMSELoss
     params: {}
 
 optimizer:
