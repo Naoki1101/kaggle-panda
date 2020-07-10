@@ -1,7 +1,7 @@
 common:
     input_root: ../data/input/
     img_file: train.csv
-    seed: &vars 2021
+    seed: &vars 2020
     drop:
         name: duplicate_img_idx
     kaggle:
