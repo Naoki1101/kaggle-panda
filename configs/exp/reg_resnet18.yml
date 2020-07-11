@@ -80,6 +80,20 @@ data:
             batch_size: 8
             num_workers: 4
         transforms:
+            hflip:
+                name: HorizontalFlip
+                params:
+                    p: 0.5
+            vflip:
+                name: VerticalFlip
+                params:
+                    p: 0.5
+            trans:
+                name: Transpose
+                params:
+                    p: 0.5
+        tta:
+            iter_num: 3
     test:
         dataset_type: CustomDataset
         is_train: False

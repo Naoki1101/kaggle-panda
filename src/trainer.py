@@ -47,25 +47,32 @@ def train_epoch(model, train_loader, criterion, optimizer, mb, cfg):
 
 def val_epoch(model, valid_loader, criterion, cfg):
     model.eval()
-    valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
+    valid_preds = np.zeros((len(valid_loader.dataset), 
+                            cfg.model.n_classes * cfg.data.valid.tta.iter_num))
     avg_val_loss = 0.
-    # initial_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
     valid_batch_size = valid_loader.batch_size
-        
-    with torch.no_grad():
-        for i, (images, labels) in enumerate(valid_loader):
-            images = images.to(device)
-            labels = labels.to(device)
+    
+    for t in range(cfg.data.valid.tta.iter_num):
+        with torch.no_grad():
+            for i, (images, labels) in enumerate(valid_loader):
+                images = images.to(device)
+                labels = labels.to(device)
 
-            preds = model(images.float())
+                preds = model(images.float())
 
-            if cfg.model.n_classes > 1:
-                loss = criterion(preds, labels)
-            else:
-                loss = criterion(preds.view(labels.shape), labels.float())
-            valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
-            avg_val_loss += loss.item() / len(valid_loader)
-    return valid_preds, avg_val_loss
+                if cfg.model.n_classes > 1:
+                    loss = criterion(preds, labels)
+                else:
+                    loss = criterion(preds.view(labels.shape), labels.float())
+                valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size, t * cfg.model.n_classes: (t + 1) * cfg.model.n_classes] = preds.cpu().detach().numpy()
+                avg_val_loss += loss.item() / len(valid_loader)
+    
+    valid_preds_tta = valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
+    for c in range(cfg.model.n_classes):
+        class_pred = valid_preds[:, [j * cfg.model.n_classes + c for j in range(cfg.data.valid.tta.iter_num)]]
+        valid_preds_tta[:, c] = np.mean(class_pred, axis=1)
+
+    return valid_preds_tta, avg_val_loss
 
 
 def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
@@ -90,47 +97,8 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
 
     for epoch in mb:
         start_time = time.time()
-        # model.train()
-        # avg_loss = 0.
-
-        # for images, labels in progress_bar(train_loader, parent=mb):
-        #     images = Variable(images).to(device)
-        #     labels = Variable(labels).to(device)
-
-        #     preds = model(images.float())
-
-        #     if cfg.model.n_classes > 1:
-        #         loss = criterion(preds, labels)
-        #     else:
-        #         loss = criterion(preds.view(labels.shape), labels.float())
-
-        #     optimizer.zero_grad()
-        #     loss.backward()
-        #     optimizer.step()
-        #     avg_loss += loss.item() / len(train_loader)
-        # train_loss_list.append(avg_loss)
-        # del images, labels; gc.collect()
 
         model, avg_loss = train_epoch(model, train_loader, criterion, optimizer, mb, cfg)
-        
-        # model.eval()
-        # valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
-        # avg_val_loss = 0.
-        # valid_batch_size = valid_loader.batch_size
-        
-        # with torch.no_grad():
-        #     for i, (images, labels) in enumerate(valid_loader):
-        #         images = images.to(device)
-        #         labels = labels.to(device)
-
-        #         preds = model(images.float())
-
-        #         if cfg.model.n_classes > 1:
-        #             loss = criterion(preds, labels)
-        #         else:
-        #             loss = criterion(preds.view(labels.shape), labels.float())
-        #         valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
-        #         avg_val_loss += loss.item() / len(valid_loader)
 
         valid_preds, avg_val_loss = val_epoch(model, valid_loader, criterion, cfg)
 

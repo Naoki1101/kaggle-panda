@@ -92,7 +92,8 @@ data:
                 name: Transpose
                 params:
                     p: 0.5
-        tta: True
+        tta:
+            iter_num: 5
     test:
         dataset_type: CustomDataset
         is_train: False
@@ -120,7 +121,8 @@ data:
                 name: Transpose
                 params:
                     p: 0.5
-        tta: True
+        tta:
+            iter_num: 5
 
 loss: 
     name: RMSELoss
