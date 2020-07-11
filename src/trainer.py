@@ -68,7 +68,7 @@ def val_epoch(model, valid_loader, criterion, cfg):
                 avg_val_loss += loss.item() / (len(valid_loader) * cfg.data.valid.tta.iter_num)
     
     if cfg.model.n_classes > 1:
-        valid_preds_tta = valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
+        valid_preds_tta = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
         for c in range(cfg.model.n_classes):
             class_pred = valid_preds[:, c::cfg.data.valid.tta.iter_num]
             valid_preds_tta[:, c] = np.mean(class_pred, axis=1)

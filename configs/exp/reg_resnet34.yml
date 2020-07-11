@@ -57,14 +57,14 @@ data:
                 name: HorizontalFlip
                 params:
                     p: 0.5
-            vflip:
-                name: VerticalFlip
-                params:
-                    p: 0.5
-            trans:
-                name: Transpose
-                params:
-                    p: 0.5
+            # vflip:
+            #     name: VerticalFlip
+            #     params:
+            #         p: 0.5
+            # trans:
+            #     name: Transpose
+            #     params:
+            #         p: 0.5
     valid:
         dataset_type: CustomDataset
         is_train: True
