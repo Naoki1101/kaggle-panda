@@ -22,6 +22,52 @@ from metrics import quadratic_weighted_kappa, QWKOptimizedRounder
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
+def train_epoch(model, train_loader, criterion, optimizer, mb, cfg):
+    model.train()
+    avg_loss = 0.
+
+    for images, labels in progress_bar(train_loader, parent=mb):
+        images = Variable(images).to(device)
+        labels = Variable(labels).to(device)
+
+        preds = model(images.float())
+
+        if cfg.model.n_classes > 1:
+            loss = criterion(preds, labels)
+        else:
+            loss = criterion(preds.view(labels.shape), labels.float())
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        avg_loss += loss.item() / len(train_loader)
+    del images, labels; gc.collect()
+    return model, avg_loss
+
+
+def val_epoch(model, valid_loader, criterion, cfg):
+    model.eval()
+    valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
+    avg_val_loss = 0.
+    # initial_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
+    valid_batch_size = valid_loader.batch_size
+        
+    with torch.no_grad():
+        for i, (images, labels) in enumerate(valid_loader):
+            images = images.to(device)
+            labels = labels.to(device)
+
+            preds = model(images.float())
+
+            if cfg.model.n_classes > 1:
+                loss = criterion(preds, labels)
+            else:
+                loss = criterion(preds.view(labels.shape), labels.float())
+            valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
+            avg_val_loss += loss.item() / len(valid_loader)
+    return valid_preds, avg_val_loss
+
+
 def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
 
     train_loader = factory.get_dataloader(trn_x, trn_y, cfg.data.train)
@@ -40,49 +86,53 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
     train_loss_list = []
     val_loss_list = []
     val_score_list = []
+    initial_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
 
     for epoch in mb:
         start_time = time.time()
-        model.train()
-        avg_loss = 0.
+        # model.train()
+        # avg_loss = 0.
 
-        for images, labels in progress_bar(train_loader, parent=mb):
-            images = Variable(images).to(device)
-            labels = Variable(labels).to(device)
+        # for images, labels in progress_bar(train_loader, parent=mb):
+        #     images = Variable(images).to(device)
+        #     labels = Variable(labels).to(device)
 
-            preds = model(images.float())
+        #     preds = model(images.float())
 
-            if cfg.model.n_classes > 1:
-                loss = criterion(preds, labels)
-            else:
-                loss = criterion(preds.view(labels.shape), labels.float())
+        #     if cfg.model.n_classes > 1:
+        #         loss = criterion(preds, labels)
+        #     else:
+        #         loss = criterion(preds.view(labels.shape), labels.float())
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            avg_loss += loss.item() / len(train_loader)
-        train_loss_list.append(avg_loss)
-        del images, labels; gc.collect()
+        #     optimizer.zero_grad()
+        #     loss.backward()
+        #     optimizer.step()
+        #     avg_loss += loss.item() / len(train_loader)
+        # train_loss_list.append(avg_loss)
+        # del images, labels; gc.collect()
+
+        model, avg_loss = train_epoch(model, train_loader, criterion, optimizer, mb, cfg)
         
-        model.eval()
-        valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
-        avg_val_loss = 0.
-        initial_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
-        valid_batch_size = valid_loader.batch_size
+        # model.eval()
+        # valid_preds = np.zeros((len(valid_loader.dataset), cfg.model.n_classes))
+        # avg_val_loss = 0.
+        # valid_batch_size = valid_loader.batch_size
         
-        with torch.no_grad():
-            for i, (images, labels) in enumerate(valid_loader):
-                images = images.to(device)
-                labels = labels.to(device)
+        # with torch.no_grad():
+        #     for i, (images, labels) in enumerate(valid_loader):
+        #         images = images.to(device)
+        #         labels = labels.to(device)
 
-                preds = model(images.float())
+        #         preds = model(images.float())
 
-                if cfg.model.n_classes > 1:
-                    loss = criterion(preds, labels)
-                else:
-                    loss = criterion(preds.view(labels.shape), labels.float())
-                valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
-                avg_val_loss += loss.item() / len(valid_loader)
+        #         if cfg.model.n_classes > 1:
+        #             loss = criterion(preds, labels)
+        #         else:
+        #             loss = criterion(preds.view(labels.shape), labels.float())
+        #         valid_preds[i * valid_batch_size: (i + 1) * valid_batch_size] = preds.cpu().detach().numpy()
+        #         avg_val_loss += loss.item() / len(valid_loader)
+
+        valid_preds, avg_val_loss = val_epoch(model, valid_loader, criterion, cfg)
 
         if cfg.model.n_classes > 1:
             val_score = quadratic_weighted_kappa(val_y, valid_preds.argmax(1))
@@ -97,6 +147,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
         
         # cm = np.round(cm / np.sum(cm, axis=1, keepdims=True), 3)
 
+        train_loss_list.append(avg_loss)
         val_loss_list.append(avg_val_loss)
         val_score_list.append(val_score)
 

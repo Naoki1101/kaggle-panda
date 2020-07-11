@@ -41,7 +41,7 @@ data:
         dataset_type: CustomDataset
         is_train: True
         n_channels: *channel
-        epochs: 1
+        epochs: 3
         img_size:
             width: &wsize 1536
             height: &hsize 1536
