@@ -17,7 +17,7 @@ import torch
 
 from utils import Timer, seed_everything, DataHandler, Kaggle
 from utils import send_line, Notion
-from trainer import train_cnn
+from trainer import train_ordinal_reg
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -66,10 +66,20 @@ def main():
         root = Path(cfg.common.input_root)
         train_df = dh.load(root / cfg.common.img_file)
 
+    with t.timer('create target dataframe'):
+        ordinal_target = np.zeros((len(train_df), 6))
+
+        for idx in train_df.index:
+            target = train_df.loc[idx, 'isup_grade']
+            ordinal_target[idx, :] = [1 if target >= i else 0 for i in range(6) ]
+
+        target_df = pd.DataFrame(ordinal_target, columns=[f'target_{i}' for i in range(6)])
+
     with t.timer('drop several rows'):
         if cfg.common.drop.name is not None:
             drop_idx = dh.load(f'../pickle/{cfg.common.drop.name}.npy')
             train_df = train_df.drop(drop_idx, axis=0).reset_index(drop=True)
+            target_df = target_df.drop(drop_idx, axis=0).reset_index(drop=True)
 
     with t.timer('make folds'):
         train_x_all = train_df.drop('isup_grade', axis=1)
@@ -77,14 +87,14 @@ def main():
         if cfg.model.n_classes == 1:
             train_y_all = train_y_all.astype(float)
         trn_x, val_x, trn_y, val_y = train_test_split(train_x_all,
-                                                      train_y_all,
+                                                      target_df,
                                                       test_size=0.2,
                                                       shuffle=True, 
                                                       random_state=cfg.common.seed,
                                                       stratify=train_df['isup_grade'])
 
     with t.timer('train model'):
-        result = train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg)
+        result = train_ordinal_reg(run_name, trn_x, val_x, trn_y, val_y, cfg)
 
     logging.disable(logging.FATAL)
     run_name_cv = f'{run_name}_{result["cv"]:.3f}'

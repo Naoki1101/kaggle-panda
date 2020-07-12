@@ -192,3 +192,15 @@ class OhemLoss(nn.Module):
             ohem_cls_loss = ohem_cls_loss[keep_idx_cuda]
         cls_loss = ohem_cls_loss.sum() / keep_num
         return cls_loss
+
+
+# =============================================================================
+# Binary
+# =============================================================================
+class BCEWithLogitsLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.bcel = nn.BCEWithLogitsLoss()
+
+    def forward(self, yhat, y):
+        return self.bcel(yhat, y)

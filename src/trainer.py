@@ -167,6 +167,96 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
     return result
 
 
+def train_ordinal_reg(run_name, trn_x, val_x, trn_y, val_y, cfg):
+
+    ordinal_val_preds = np.zeros_like(val_y)
+
+    for i, col in enumerate(trn_y.columns[1:]):
+        print(f'\n\n====================  {col}  ====================')
+        logging.debug(f'\n\n====================  {col}  ====================')
+
+        train_loader = factory.get_dataloader(trn_x, trn_y[col], cfg.data.train)
+        valid_loader = factory.get_dataloader(val_x, val_y[col], cfg.data.valid)
+
+        model = factory.get_model(cfg).to(device)
+        
+        criterion = factory.get_loss(cfg)
+        optimizer = factory.get_optim(cfg, model.parameters())
+        scheduler = factory.get_scheduler(cfg, optimizer)
+
+        best_epoch = -1
+        best_val_loss = np.inf
+        mb = master_bar(range(cfg.data.train.epochs))
+
+        train_loss_list = []
+        val_loss_list = []
+        val_score_list = []
+        initial_coef = [0.5, 1.5, 2.5, 3.5, 4.5]
+
+        for epoch in mb:
+            start_time = time.time()
+
+            model, avg_loss = train_epoch(model, train_loader, criterion, optimizer, mb, cfg)
+
+            valid_preds, avg_val_loss = val_epoch(model, valid_loader, criterion, cfg)
+
+            train_loss_list.append(avg_loss)
+            val_loss_list.append(avg_val_loss)
+
+            if cfg.scheduler.name != 'ReduceLROnPlateau':
+                scheduler.step()
+            elif cfg.scheduler.name == 'ReduceLROnPlateau':
+                scheduler.step(avg_val_loss)
+
+            elapsed = time.time() - start_time
+            mb.write(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.4f}  avg_val_loss: {avg_val_loss:.4f} time: {elapsed:.0f}s')
+            logging.debug(f'Epoch {epoch+1} - avg_train_loss: {avg_loss:.4f}  avg_val_loss: {avg_val_loss:.4f} time: {elapsed:.0f}s')
+
+            if avg_val_loss < best_val_loss:
+                best_epoch = epoch + 1
+                best_val_loss = avg_val_loss
+                best_valid_preds = valid_preds
+                if cfg.model.multi_gpu:
+                    best_model = model.module.state_dict()
+                else:
+                    best_model = model.state_dict()
+
+        print(f'epoch: {best_epoch}   loss: {best_val_loss}')
+
+        ordinal_val_preds[:, i] = best_valid_preds
+
+        np.save(f'../logs/{run_name}/oof_{col}.npy', best_valid_preds)
+        torch.save(best_model, f'../logs/{run_name}/weight_best_{col}.pt')
+
+    valid_preds = np.sum(ordinal_val_preds, axis=1)
+    val_y = (np.sum(val_y.values, axis=1) - 1).astype(int)
+
+    optR = QWKOptimizedRounder()
+    optR.fit(valid_preds.copy(), val_y, initial_coef)
+    best_coef = optR.coefficients()
+    valid_preds_class = optR.predict(valid_preds.copy(), best_coef)
+    best_val_score = quadratic_weighted_kappa(val_y, valid_preds_class)
+    cm = confusion_matrix(val_y, valid_preds_class)
+
+    print('\n\nCONFUSION MATRIX')
+    logging.debug('\n\nCONFUSION MATRIX')
+    print(cm)
+    logging.debug(cm)
+
+    print('\n\n===================================\n')
+    print(f'CV: {best_val_score:.6f}')
+    logging.debug(f'\n\nCV: {best_val_score:.6f}')
+    print('\n===================================\n\n')
+
+    result = {
+        'cv': best_val_score,
+    }
+
+    np.save(f'../logs/{run_name}/best_coef.npy', best_coef)
+    
+    return result
+
+
 def save_png(run_name, cfg, train_loss_list, val_loss_list, val_score_list):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 5))
     
