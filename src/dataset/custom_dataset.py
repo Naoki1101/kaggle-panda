@@ -47,8 +47,8 @@ class CustomDataset(Dataset):
         tiles = []
         for i in range(self.cfg.tile.num):
             tile = cv2.imread(f'{self.image_path}/{image_id}_{i}.png')
-            # if self.transforms:
-            #     tile = self.transforms(image=tile)['image']
+            if self.transforms:
+                tile = self.transforms(image=tile)['image']
             tiles.append(tile)
         # if self.transforms:
         #     random.shuffle(tiles)
