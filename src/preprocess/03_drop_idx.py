@@ -29,6 +29,8 @@ def main():
 
 
     drop_idx2 = train_df[train_df['gleason_score'].isin(['3+5', '5+3'])].index.values
+    drop_idx1 = np.load('../pickle/duplicate_img_idx.npy')
+    drop_idx2 = np.unique(np.concatenate([drop_idx1, drop_idx2]))
     np.save('../pickle/drop_idx2.npy', drop_idx2)
 
 
