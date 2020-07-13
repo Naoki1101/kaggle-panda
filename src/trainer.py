@@ -223,7 +223,7 @@ def train_ordinal_reg(run_name, trn_x, val_x, trn_y, val_y, cfg):
 
         print(f'epoch: {best_epoch}   loss: {best_val_loss}')
 
-        ordinal_val_preds[:, i] = best_valid_preds
+        ordinal_val_preds[:, i] = 1 / (1 + np.exp(-1 * best_valid_preds))
 
         np.save(f'../logs/{run_name}/oof_{col}.npy', best_valid_preds)
         torch.save(best_model, f'../logs/{run_name}/weight_best_{col}.pt')
