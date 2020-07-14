@@ -4,7 +4,6 @@ common:
     seed: &vars 2020
     drop:
         - large_diff_idx
-        - noise_idx
     kaggle:
         data: True
         notebook: True
@@ -42,7 +41,7 @@ data:
         dataset_type: CustomDataset
         is_train: True
         n_channels: *channel
-        epochs: 10
+        epochs: 30
         img_size:
             width: &wsize 1536
             height: &hsize 1536
