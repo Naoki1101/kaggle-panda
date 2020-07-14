@@ -67,9 +67,13 @@ def main():
         train_df = dh.load(root / cfg.common.img_file)
 
     with t.timer('drop several rows'):
-        if cfg.common.drop.name is not None:
-            drop_idx = dh.load(f'../pickle/{cfg.common.drop.name}.npy')
-            train_df = train_df.drop(drop_idx, axis=0).reset_index(drop=True)
+        if cfg.common.drop is not None:
+            drop_idx_list = []
+            for drop_name in cfg.common.drop:
+                drop_idx = dh.load(f'../pickle/{cfg.common.drop.name}.npy')
+                drop_idx_list.append(drop_idx)
+            all_drop_idx = np.unique(np.concatenate(drop_idx_list))
+            train_df = train_df.drop(all_drop_idx, axis=0).reset_index(drop=True)
 
     with t.timer('make folds'):
         train_x_all = train_df.drop('isup_grade', axis=1)
