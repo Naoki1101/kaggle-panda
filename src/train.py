@@ -70,7 +70,7 @@ def main():
         if cfg.common.drop is not None:
             drop_idx_list = []
             for drop_name in cfg.common.drop:
-                drop_idx = dh.load(f'../pickle/{cfg.common.drop.name}.npy')
+                drop_idx = dh.load(f'../pickle/{drop_name}.npy')
                 drop_idx_list.append(drop_idx)
             all_drop_idx = np.unique(np.concatenate(drop_idx_list))
             train_df = train_df.drop(all_drop_idx, axis=0).reset_index(drop=True)
