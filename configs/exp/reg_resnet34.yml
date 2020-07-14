@@ -65,9 +65,6 @@ data:
                 name: Transpose
                 params:
                     p: 0.5
-            gray:
-                name: ToGray
-                params: 1.0
     valid:
         dataset_type: CustomDataset
         is_train: True

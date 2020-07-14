@@ -47,6 +47,7 @@ class CustomDataset(Dataset):
         tiles = []
         for i in range(self.cfg.tile.num):
             tile = cv2.imread(f'{self.image_path}/{image_id}_{i}.png')
+            tile = cv2.cvtColor(tile, cv2.COLOR_BGR2GRAY)
             if self.transforms:
                 tile = self.transforms(image=tile)['image']
             tiles.append(tile)
