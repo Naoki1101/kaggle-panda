@@ -47,9 +47,6 @@ class CustomDataset(Dataset):
         tiles = []
         for i in range(self.cfg.tile.num):
             tile = cv2.imread(f'{self.image_path}/{image_id}_{i}.png')
-            print(tile.shape)
-            tile = cv2.cvtColor(tile, cv2.COLOR_BGR2GRAY).reshape(256, 256, -1)
-            print(tile.shape)
             if self.transforms:
                 tile = self.transforms(image=tile)['image']
             tiles.append(tile)
@@ -60,6 +57,7 @@ class CustomDataset(Dataset):
         # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:
             image = self.transforms(image=image)['image']
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY).reshape(256, 256, -1)
         image = image.transpose(2, 0, 1).astype(np.float32)
 
         if self.is_train:
