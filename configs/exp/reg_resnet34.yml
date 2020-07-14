@@ -10,7 +10,7 @@ common:
 
 model:
     name: resnet34
-    n_channels: &channel 3
+    n_channels: &channel 1
     n_classes: 1
     pretrained: True
     multi_gpu: True
@@ -47,7 +47,7 @@ data:
             height: &hsize 1536
         tile:
             size: &tile_size 256
-            num: &tile_num 30
+            num: &tile_num 36
         loader:
             shuffle: True
             batch_size: 8
@@ -65,6 +65,9 @@ data:
                 name: Transpose
                 params:
                     p: 0.5
+            gray:
+                name: ToGray
+                params: 1.0
     valid:
         dataset_type: CustomDataset
         is_train: True
