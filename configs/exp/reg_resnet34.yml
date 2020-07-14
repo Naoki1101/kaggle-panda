@@ -47,7 +47,7 @@ data:
             height: &hsize 1536
         tile:
             size: &tile_size 256
-            num: &tile_num 32
+            num: &tile_num 30
         loader:
             shuffle: True
             batch_size: 8
