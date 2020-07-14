@@ -3,7 +3,7 @@ common:
     img_file: train.csv
     seed: &vars 2020
     drop:
-        name: duplicate_img_idx
+        name: drop_idx2
     kaggle:
         data: True
         notebook: True
