@@ -3,7 +3,7 @@ common:
     img_file: train.csv
     seed: &vars 2020
     drop:
-        - noise_idx
+        - large_diff_idx
     kaggle:
         data: False
         notebook: False
@@ -47,7 +47,7 @@ data:
             height: &hsize 1536
         tile:
             size: &tile_size 256
-            num: &tile_num 36
+            num: &tile_num 32
         loader:
             shuffle: True
             batch_size: 8
