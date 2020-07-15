@@ -125,8 +125,9 @@ data:
             iter_num: 1
 
 loss: 
-    name: RMSELoss
-    params: {}
+    name: SmoothCrossEntropyLoss
+    params:
+        smoothing: 0.1
 
 optimizer:
     name: Adam
