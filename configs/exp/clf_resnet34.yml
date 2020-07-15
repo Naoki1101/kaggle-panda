@@ -11,7 +11,7 @@ common:
 model:
     name: resnet34
     n_channels: &channel 3
-    n_classes: 1
+    n_classes: &class 6
     pretrained: True
     multi_gpu: True
     avgpool:
@@ -33,7 +33,7 @@ model:
             name: Linear
             params:
                 in_features: 512
-                out_features: 1
+                out_features: *class
     metric:
 
 data:
@@ -46,8 +46,8 @@ data:
             width: &wsize 1536
             height: &hsize 1536
         tile:
-            size: &tile_size 128
-            num: &tile_num 144
+            size: &tile_size 256
+            num: &tile_num 36
         loader:
             shuffle: True
             batch_size: 8

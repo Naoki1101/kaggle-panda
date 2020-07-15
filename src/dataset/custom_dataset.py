@@ -57,7 +57,6 @@ class CustomDataset(Dataset):
         # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
         if self.transforms:
             image = self.transforms(image=image)['image']
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY).reshape(256, 256, -1)
         image = image.transpose(2, 0, 1).astype(np.float32)
 
         if self.is_train:
