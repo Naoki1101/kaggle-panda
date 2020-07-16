@@ -28,8 +28,10 @@ cd ../src
 # python train.py -m 'reg_resnet34_2' -c 'noise_idx'
 # python train.py -m 'reg_resnet34_3' -c 'duplicate_img_idx, noise_idx'
 # python train.py -m 'reg_resnet34_4' -c 'duplicate_img_idx, noise_idx, large_diff_idx'
-# python train.py -m 'reg_resnet34_5' -c '128x144'
-python train.py -m 'reg_resnet34_6' -c '128x144, large_diff_idx'
+# python train.py -m 'reg_resnet34_5' -c '128x144 duplicate_img_idx, noise_idx, large_diff_idx'
+# python train.py -m 'reg_resnet34_6' -c '128x144, large_diff_idx'
+python train.py -m 'reg_resnet34_7' -c '384x16, duplicate_img_idx, noise_idx'
+
 # python train.py -m 'reg_resnet50' -c 'img_size=c'
 
 # python train.py -m 'reg_se_resnext50_32x4d' -c 'img_size=768'
