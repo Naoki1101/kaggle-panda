@@ -3,7 +3,8 @@ common:
     img_file: train.csv
     seed: &vars 2020
     drop:
-        - large_diff_idx
+        - duplicate_img_idx
+        - noise_idx
     kaggle:
         data: True
         notebook: True

@@ -91,6 +91,7 @@ def train_cnn(run_name, trn_x, val_x, trn_y, val_y, cfg):
 
     best_epoch = -1
     best_val_score = -np.inf
+    best_coef = []
     mb = master_bar(range(cfg.data.train.epochs))
 
     train_loss_list = []
