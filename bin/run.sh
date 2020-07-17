@@ -30,7 +30,16 @@ cd ../src
 # python train.py -m 'reg_resnet34_4' -c 'duplicate_img_idx, noise_idx, large_diff_idx'
 # python train.py -m 'reg_resnet34_5' -c '128x144 duplicate_img_idx, noise_idx, large_diff_idx'
 # python train.py -m 'reg_resnet34_6' -c '128x144, large_diff_idx'
-python train.py -m 'reg_resnet34_7' -c '384x16, duplicate_img_idx, noise_idx'
+# python train.py -m 'reg_resnet34_7' -c '384x16, duplicate_img_idx, noise_idx'
+python train.py -m 'reg_resnet34_8' -c '128x144, large'
+python train.py -m 'reg_resnet34_9' -c '128x144, duplicate & noise'
+python train.py -m 'reg_resnet34_10' -c '128x144, large & duplicate & noise'
+python train.py -m 'reg_resnet34_11' -c '256x36, large'
+python train.py -m 'reg_resnet34_12' -c '256x36, duplicate & noise'
+python train.py -m 'reg_resnet34_13' -c '256x36, large & duplicate & noise'
+python train.py -m 'reg_resnet34_14' -c '384x16, large'
+python train.py -m 'reg_resnet34_15' -c '384x16, duplicate & noise'
+python train.py -m 'reg_resnet34_16' -c '384x16, large & duplicate & noise'
 
 # python train.py -m 'reg_resnet50' -c 'img_size=c'
 
