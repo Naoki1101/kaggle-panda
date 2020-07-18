@@ -24,7 +24,7 @@ cd ../src
 # python train.py -m 'reg_resnest50' -c '...'
 
 # python train.py -m 'reg_resnet18' -c 'test tta'
-python train.py -m 'reg_resnet34' -c 'sort tile by imp'
+python train.py -m 'reg_resnet34' -c 'use top16 tiles'
 # python train.py -m 'reg_resnet34_2' -c 'noise_idx'
 # python train.py -m 'reg_resnet34_3' -c 'duplicate_img_idx, noise_idx'
 # python train.py -m 'reg_resnet34_4' -c 'duplicate_img_idx, noise_idx, large_diff_idx'

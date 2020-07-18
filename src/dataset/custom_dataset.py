@@ -39,7 +39,7 @@ class CustomDataset(Dataset):
         self.transforms = get_transforms(self.cfg)
         self.is_train = cfg.is_train
         self.image_path = f'../data/input/train_tile_{cfg.tile.size}x{cfg.tile.num}'
-        self.tile_imp_dict = joblib.load(path)('../pickle/tile_imp.pkl')
+        self.tile_imp_dict = joblib.load('../pickle/tile_imp.pkl')
 
     def __len__(self):
         return len(self.image_ids)
@@ -56,7 +56,7 @@ class CustomDataset(Dataset):
         #     random.shuffle(tiles)
 
         sorted_idx = np.argsort(self.tile_imp_dict[image_id])
-        tiles = [tiles[i] for i in sorted_idx]
+        tiles = [tiles[i] for i in sorted_idx][:9]
 
         image = concat_tiles(tiles)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)

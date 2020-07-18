@@ -5,8 +5,8 @@ common:
     drop:
         - large_diff_idx
     kaggle:
-        data: True
-        notebook: True
+        data: False
+        notebook: False
 
 model:
     name: resnet34
