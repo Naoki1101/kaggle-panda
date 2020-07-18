@@ -1,6 +1,7 @@
 import os
 import random
 import cv2
+import joblib
 import numpy as np
 from torch.utils.data import Dataset
 import albumentations as album
@@ -38,6 +39,7 @@ class CustomDataset(Dataset):
         self.transforms = get_transforms(self.cfg)
         self.is_train = cfg.is_train
         self.image_path = f'../data/input/train_tile_{cfg.tile.size}x{cfg.tile.num}'
+        self.tile_imp_dict = joblib.load(path)('../pickle/tile_imp.pkl')
 
     def __len__(self):
         return len(self.image_ids)
@@ -52,6 +54,10 @@ class CustomDataset(Dataset):
             tiles.append(tile)
         # if self.transforms:
         #     random.shuffle(tiles)
+
+        sorted_idx = np.argsort(self.tile_imp_dict[image_id])
+        tiles = [tiles[i] for i in sorted_idx]
+
         image = concat_tiles(tiles)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)
         # image = cv2.resize(image, dsize=(self.cfg.img_size.height, self.cfg.img_size.width))
