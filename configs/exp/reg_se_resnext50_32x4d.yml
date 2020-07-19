@@ -3,7 +3,7 @@ common:
     img_file: train.csv
     seed: &vars 2020
     drop:
-        name: duplicate_img_idx
+        - large_diff_idx
     kaggle:
         data: False
         notebook: False
@@ -18,9 +18,6 @@ model:
         name: GeM
         params: {}
     head:
-        act:
-            name: ReLU
-            params: {}
         linear:
             name: Linear
             params:
@@ -32,11 +29,14 @@ data:
     train:
         dataset_type: CustomDataset
         is_train: True
-        img_size:
-            width: &wsize 768
-            height: &hsize 768
         n_channels: *channel
         epochs: 10
+        img_size:
+            width: &wsize 1536
+            height: &hsize 1536
+        tile:
+            size: &tile_size 256
+            num: &tile_num 36
         loader:
             shuffle: True
             batch_size: 8
@@ -50,34 +50,68 @@ data:
                 name: VerticalFlip
                 params:
                     p: 0.5
-            # trans:
-            #     name: Transpose
-            #     params:
-            #         p: 0.5
+            trans:
+                name: Transpose
+                params:
+                    p: 0.5
     valid:
         dataset_type: CustomDataset
         is_train: True
+        n_channels: *channel
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: *channel
+        tile:
+            size: *tile_size
+            num: *tile_num
         loader:
             shuffle: False
             batch_size: 4
             num_workers: 4
         transforms:
+            # hflip:
+            #     name: HorizontalFlip
+            #     params:
+            #         p: 0.5
+            # vflip:
+            #     name: VerticalFlip
+            #     params:
+            #         p: 0.5
+            # trans:
+            #     name: Transpose
+            #     params:
+            #         p: 0.5
+        tta:
+            iter_num: 1
     test:
         dataset_type: CustomDataset
         is_train: False
+        n_channels: *channel
         img_size:
             width: *wsize
             height: *hsize
-        n_channels: *channel
+        tile:
+            size: *tile_size
+            num: *tile_num
         loader:
             shuffle: False
-            batch_size: 2
+            batch_size: 4
             num_workers: 4
         transforms:
+        #     hflip:
+        #         name: HorizontalFlip
+        #         params:
+        #             p: 0.5
+        #     vflip:
+        #         name: VerticalFlip
+        #         params:
+        #             p: 0.5
+        #     trans:
+        #         name: Transpose
+        #         params:
+        #             p: 0.5
+        tta:
+            iter_num: 1
 
 loss: 
     name: RMSELoss
