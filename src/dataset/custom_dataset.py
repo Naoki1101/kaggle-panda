@@ -56,7 +56,8 @@ class CustomDataset(Dataset):
         #     random.shuffle(tiles)
 
         sorted_idx = np.argsort(self.tile_imp_dict[image_id])
-        tiles = [tiles[i] for i in sorted_idx][:16]
+        # tiles = [tiles[i] for i in sorted_idx][:16]
+        tiles = tiles[:9]
 
         image = concat_tiles(tiles)
         image = 255 - (image * (255.0/image.max())).astype(np.uint8)

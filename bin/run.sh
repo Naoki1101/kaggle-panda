@@ -43,7 +43,7 @@ cd ../src
 
 # python train.py -m 'reg_resnet50' -c 'img_size=c'
 
-python train.py -m 'reg_se_resnext50_32x4d' -c 'use top16 tiles'
+python train.py -m 'reg_se_resnext50_32x4d' -c 'use top9(simple) tiles'
 
 
 # =============================================================================

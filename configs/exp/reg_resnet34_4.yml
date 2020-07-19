@@ -108,7 +108,7 @@ data:
             num: *tile_num
         loader:
             shuffle: False
-            batch_size: 4
+            batch_size: 8
             num_workers: 4
         transforms:
         #     hflip:
