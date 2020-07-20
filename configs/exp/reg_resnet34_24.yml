@@ -1,0 +1,145 @@
+common:
+    input_root: ../data/input/
+    img_file: train.csv
+    seed: &vars 2022
+    drop:
+        - duplicate_img_idx
+        - noise_idx
+    kaggle:
+        data: True
+        notebook: True
+
+model:
+    name: resnet34
+    n_channels: &channel 3
+    n_classes: 1
+    pretrained: True
+    multi_gpu: True
+    avgpool:
+        name: GeM
+        params: {}
+    head:
+        # act:
+        #     name: ReLU
+        #     params: {}
+        # batch_norm: 
+        #     name: BatchNorm1d
+        #     params:
+        #         num_features: 512
+        # drop:
+        #     name: Dropout
+        #     params:
+        #         p: 0.5
+        linear:
+            name: Linear
+            params:
+                in_features: 512
+                out_features: 1
+    metric:
+
+data:
+    train:
+        dataset_type: CustomDataset
+        is_train: True
+        n_channels: *channel
+        epochs: 10
+        img_size:
+            width: &wsize 1536
+            height: &hsize 1536
+        tile:
+            size: &tile_size 256
+            num: &tile_num 36
+        loader:
+            shuffle: True
+            batch_size: 8
+            num_workers: 4
+        transforms:
+            hflip:
+                name: HorizontalFlip
+                params:
+                    p: 0.5
+            vflip:
+                name: VerticalFlip
+                params:
+                    p: 0.5
+            trans:
+                name: Transpose
+                params:
+                    p: 0.5
+    valid:
+        dataset_type: CustomDataset
+        is_train: True
+        n_channels: *channel
+        img_size:
+            width: *wsize
+            height: *hsize
+        tile:
+            size: *tile_size
+            num: *tile_num
+        loader:
+            shuffle: False
+            batch_size: 4
+            num_workers: 4
+        transforms:
+            # hflip:
+            #     name: HorizontalFlip
+            #     params:
+            #         p: 0.5
+            # vflip:
+            #     name: VerticalFlip
+            #     params:
+            #         p: 0.5
+            # trans:
+            #     name: Transpose
+            #     params:
+            #         p: 0.5
+        tta:
+            iter_num: 1
+    test:
+        dataset_type: CustomDataset
+        is_train: False
+        n_channels: *channel
+        img_size:
+            width: *wsize
+            height: *hsize
+        tile:
+            size: *tile_size
+            num: *tile_num
+        loader:
+            shuffle: False
+            batch_size: 4
+            num_workers: 4
+        transforms:
+        #     hflip:
+        #         name: HorizontalFlip
+        #         params:
+        #             p: 0.5
+        #     vflip:
+        #         name: VerticalFlip
+        #         params:
+        #             p: 0.5
+        #     trans:
+        #         name: Transpose
+        #         params:
+        #             p: 0.5
+        tta:
+            iter_num: 1
+
+loss: 
+    name: RMSELoss
+    params: {}
+
+optimizer:
+    name: Adam
+    params:
+        lr: 0.0001
+
+scheduler:
+    name: CosineAnnealingLR
+    params:
+        eta_min: 0.00001
+        T_max: 10
+    # name: ReduceLROnPlateau
+    # params:
+    #     factor: 0.5
+    #     patience: 5
