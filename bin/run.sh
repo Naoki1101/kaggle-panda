@@ -46,11 +46,11 @@ cd ../src
 # python train.py -m 'reg_resnet34_20' -c 'seed=2021, duplicate_img_idx, noise_idx, large_diff_idx'
 # python train.py -m 'reg_resnet34_21' -c 'seed=2021, 128x144 duplicate_img_idx, noise_idx, large_diff_idx'
 
-python train.py -m 'reg_resnet34_17' -c 'seed=2022, large_diff_idx'
-python train.py -m 'reg_resnet34_18' -c 'seed=2022, noise_idx'
-python train.py -m 'reg_resnet34_19' -c 'seed=2022, duplicate_img_idx, noise_idx'
-python train.py -m 'reg_resnet34_20' -c 'seed=2022, duplicate_img_idx, noise_idx, large_diff_idx'
-python train.py -m 'reg_resnet34_21' -c 'seed=2022, 128x144 duplicate_img_idx, noise_idx, large_diff_idx'
+python train.py -m 'reg_resnet34_22' -c 'seed=2022, large_diff_idx'
+python train.py -m 'reg_resnet34_23' -c 'seed=2022, noise_idx'
+python train.py -m 'reg_resnet34_24' -c 'seed=2022, duplicate_img_idx, noise_idx'
+python train.py -m 'reg_resnet34_25' -c 'seed=2022, duplicate_img_idx, noise_idx, large_diff_idx'
+python train.py -m 'reg_resnet34_26' -c 'seed=2022, 128x144 duplicate_img_idx, noise_idx, large_diff_idx'
 
 # python train.py -m 'reg_resnet50' -c 'img_size=c'
 
