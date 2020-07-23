@@ -51,12 +51,6 @@ cd ../src
 # python train.py -m 'reg_resnet34_25' -c 'seed=2022, duplicate_img_idx, noise_idx, large_diff_idx'
 # python train.py -m 'reg_resnet34_26' -c 'seed=2022, 128x144 duplicate_img_idx, noise_idx, large_diff_idx'
 
-python train.py -m 'reg_resnet34_27' -c 'seed=2023, large_diff_idx'
-python train.py -m 'reg_resnet34_28' -c 'seed=2023, noise_idx'
-python train.py -m 'reg_resnet34_29' -c 'seed=2023, duplicate_img_idx, noise_idx'
-python train.py -m 'reg_resnet34_30' -c 'seed=2023, duplicate_img_idx, noise_idx, large_diff_idx'
-python train.py -m 'reg_resnet34_31' -c 'seed=2023, 128x144 duplicate_img_idx, noise_idx, large_diff_idx'
-
 # python train.py -m 'reg_resnet50' -c 'img_size=c'
 
 # python train.py -m 'reg_se_resnext50_32x4d' -c 'use top9(simple) tiles'
@@ -66,9 +60,3 @@ python train.py -m 'reg_resnet34_31' -c 'seed=2023, 128x144 duplicate_img_idx, n
 # Ordinal Regression
 # =============================================================================
 # python train_ordinal_reg.py -m 'ordinal_reg_resnet34' -c '...'
-
-
-cd ../
-git add -A
-git commit -m '...'
-git push origin master
